@@ -1,0 +1,3581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Industrial Automation Deployment Platform – Advanced Edition | Serbia Ice Cream Manufacturing</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&family=Exo+2:wght@200;300;400;600;700;900&display=swap');
+
+:root {
+  --navy: #050d1a;
+  --navy2: #0a1628;
+  --navy3: #0f2040;
+  --navy4: #162a4a;
+  --orange: #ff6b00;
+  --orange2: #ff8c00;
+  --orange3: #ffaa33;
+  --cyan: #00d4ff;
+  --cyan2: #00a8cc;
+  --green: #00ff88;
+  --green2: #00cc66;
+  --red: #ff3355;
+  --yellow: #ffdd00;
+  --purple: #8844ff;
+  --gray: #4a6080;
+  --gray2: #2a3a50;
+  --text: #c8dff5;
+  --text2: #7a9ab5;
+  --border: rgba(0,180,255,0.15);
+  --glow: 0 0 20px rgba(0,180,255,0.3);
+  --orange-glow: 0 0 20px rgba(255,107,0,0.4);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background: var(--navy);
+  color: var(--text);
+  font-family: 'Exo 2', sans-serif;
+  font-size: 14px;
+  overflow-x: hidden;
+}
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width:6px; height:6px; }
+::-webkit-scrollbar-track { background: var(--navy2); }
+::-webkit-scrollbar-thumb { background: var(--orange); border-radius:3px; }
+
+/* TOP STATUS BAR */
+#topbar {
+  position: fixed; top:0; left:0; right:0; z-index:1000;
+  background: linear-gradient(90deg, #030a14 0%, #0a1628 50%, #030a14 100%);
+  border-bottom: 1px solid var(--orange);
+  height: 44px;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 20px;
+  box-shadow: 0 2px 20px rgba(255,107,0,0.2);
+}
+#topbar .brand {
+  display:flex; align-items:center; gap:12px;
+}
+#topbar .brand .logo {
+  width:28px; height:28px;
+  background: var(--orange);
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  animation: pulseLogo 2s ease-in-out infinite;
+}
+@keyframes pulseLogo { 0%,100%{box-shadow:0 0 8px var(--orange);} 50%{box-shadow:0 0 20px var(--orange);} }
+#topbar .brand .title {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 15px; font-weight: 700;
+  color: #fff;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+#topbar .brand .subtitle {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px; color: var(--orange3);
+  letter-spacing: 1px;
+}
+#topbar .status-items {
+  display:flex; align-items:center; gap:20px;
+}
+.status-pill {
+  display:flex; align-items:center; gap:6px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px; color: var(--text2);
+  padding: 3px 10px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: rgba(0,0,0,0.3);
+}
+.status-pill .dot {
+  width:6px; height:6px; border-radius:50%;
+  background: var(--green);
+  animation: blink 1.5s ease-in-out infinite;
+}
+.status-pill .dot.orange { background: var(--orange); animation-delay:0.5s; }
+.status-pill .dot.yellow { background: var(--yellow); animation-delay:1s; }
+@keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+#topbar .badges {
+  display:flex; align-items:center; gap:8px;
+}
+.badge {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px; padding: 2px 8px;
+  border-radius: 3px; letter-spacing: 1px;
+  font-weight: 700;
+}
+.badge.iec { background: rgba(0,212,255,0.15); color: var(--cyan); border: 1px solid var(--cyan2); }
+.badge.haccp { background: rgba(0,255,136,0.15); color: var(--green); border: 1px solid var(--green2); }
+.badge.v { background: rgba(255,107,0,0.15); color: var(--orange); border: 1px solid var(--orange); }
+
+/* SIDEBAR */
+#sidebar {
+  position: fixed; left:0; top:44px; bottom:0; width:220px; z-index:900;
+  background: linear-gradient(180deg, var(--navy2) 0%, #07111f 100%);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  display:flex; flex-direction:column;
+}
+.sidebar-section {
+  padding: 14px 16px 6px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px; color: var(--orange3);
+  letter-spacing: 2px; text-transform:uppercase;
+  border-bottom: 1px solid rgba(255,107,0,0.1);
+}
+.nav-item {
+  display:flex; align-items:center; gap:10px;
+  padding: 10px 16px;
+  cursor:pointer; transition: all 0.2s;
+  border-left: 3px solid transparent;
+  color: var(--text2);
+  font-family: 'Exo 2', sans-serif;
+  font-size: 12px; font-weight:500;
+}
+.nav-item:hover { background: rgba(255,107,0,0.08); color: var(--orange3); border-left-color: var(--orange); }
+.nav-item.active { background: rgba(255,107,0,0.12); color: var(--orange); border-left-color: var(--orange); }
+.nav-item .icon {
+  width:20px; height:20px; display:flex; align-items:center; justify-content:center;
+  font-size:14px;
+}
+.nav-badge {
+  margin-left:auto;
+  font-family: 'Share Tech Mono', monospace;
+  font-size:9px; padding:1px 5px;
+  background: rgba(255,107,0,0.2); color:var(--orange);
+  border-radius:3px; border:1px solid rgba(255,107,0,0.3);
+}
+
+.sidebar-kpi {
+  margin: 10px 12px;
+  padding: 10px 12px;
+  background: rgba(0,0,0,0.3);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+.kpi-label { font-family:'Share Tech Mono',monospace; font-size:9px; color:var(--text2); letter-spacing:1px; }
+.kpi-value { font-family:'Rajdhani',sans-serif; font-size:20px; font-weight:700; color:var(--orange); }
+.kpi-sub { font-size:9px; color:var(--green); margin-top:2px; }
+
+/* MAIN CONTENT */
+#main {
+  margin-left: 220px;
+  margin-top: 44px;
+  min-height: calc(100vh - 44px);
+  padding: 20px;
+}
+
+.module-section {
+  display: none;
+}
+.module-section.active {
+  display: block;
+}
+
+/* PAGE HEADERS */
+.page-header {
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid var(--border);
+}
+.page-title {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 26px; font-weight:700; color:#fff;
+  letter-spacing:2px; text-transform:uppercase;
+}
+.page-title span { color: var(--orange); }
+.page-sub {
+  font-family:'Share Tech Mono',monospace;
+  font-size:10px; color:var(--text2); letter-spacing:1px; margin-top:2px;
+}
+
+/* CARDS */
+.card {
+  background: linear-gradient(135deg, var(--navy2) 0%, var(--navy3) 100%);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  position:relative; overflow:hidden;
+}
+.card::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:2px;
+  background: linear-gradient(90deg, transparent, var(--orange), transparent);
+  opacity:0.6;
+}
+.card-title {
+  font-family:'Rajdhani',sans-serif; font-size:13px; font-weight:600;
+  color:var(--orange3); letter-spacing:2px; text-transform:uppercase;
+  margin-bottom:12px; display:flex; align-items:center; gap:8px;
+}
+.card-title::before {
+  content:''; width:3px; height:13px; background:var(--orange); display:block;
+}
+
+/* GRID LAYOUTS */
+.grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; }
+.grid-4 { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }
+.col-span-2 { grid-column: span 2; }
+.col-span-3 { grid-column: span 3; }
+
+/* ==============================
+   MODULE 1: PID SIMULATION
+   ============================== */
+
+.pid-display-row {
+  display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:16px;
+}
+.pid-metric {
+  background: rgba(0,0,0,0.4);
+  border: 1px solid var(--border);
+  border-radius:6px; padding:12px;
+  text-align:center;
+}
+.pid-metric .label { font-family:'Share Tech Mono',monospace; font-size:9px; color:var(--text2); letter-spacing:1px; }
+.pid-metric .value { font-family:'Rajdhani',monospace; font-size:24px; font-weight:700; margin-top:4px; }
+.pid-metric .unit { font-size:10px; color:var(--text2); }
+.v-cyan { color:var(--cyan); }
+.v-orange { color:var(--orange); }
+.v-green { color:var(--green); }
+.v-red { color:var(--red); }
+.v-yellow { color:var(--yellow); }
+
+canvas#pidChart {
+  width:100%; height:220px;
+  background: rgba(0,0,0,0.5);
+  border: 1px solid var(--border);
+  border-radius:6px;
+  display:block;
+}
+
+.slider-row {
+  display:flex; align-items:center; gap:12px; margin-bottom:10px;
+}
+.slider-row label {
+  font-family:'Share Tech Mono',monospace; font-size:11px;
+  color:var(--text2); width:60px; letter-spacing:1px;
+}
+.slider-row input[type=range] {
+  flex:1; -webkit-appearance:none; height:4px;
+  background: linear-gradient(90deg, var(--orange), var(--orange2));
+  border-radius:2px; outline:none; cursor:pointer;
+}
+.slider-row input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance:none; width:14px; height:14px;
+  background:var(--orange); border-radius:50%;
+  box-shadow: 0 0 8px var(--orange);
+  cursor:pointer;
+}
+.slider-row .val {
+  font-family:'Rajdhani',sans-serif; font-weight:700;
+  color:var(--orange); width:50px; text-align:right;
+}
+
+.toggle-btn {
+  padding:8px 18px; border:none; border-radius:4px;
+  font-family:'Rajdhani',sans-serif; font-size:13px; font-weight:600;
+  letter-spacing:1px; cursor:pointer; transition:all 0.2s;
+}
+.btn-orange {
+  background: rgba(255,107,0,0.15); color:var(--orange);
+  border:1px solid var(--orange);
+}
+.btn-orange:hover, .btn-orange.active {
+  background: var(--orange); color:#000;
+  box-shadow: var(--orange-glow);
+}
+.btn-cyan {
+  background: rgba(0,212,255,0.1); color:var(--cyan);
+  border:1px solid var(--cyan2);
+}
+.btn-cyan:hover, .btn-cyan.active {
+  background: var(--cyan); color:#000;
+  box-shadow: var(--glow);
+}
+.btn-red {
+  background: rgba(255,51,85,0.1); color:var(--red);
+  border:1px solid var(--red);
+}
+.btn-red:hover { background:var(--red); color:#fff; }
+.btn-green {
+  background: rgba(0,255,136,0.1); color:var(--green);
+  border:1px solid var(--green2);
+}
+.btn-green:hover { background:var(--green); color:#000; }
+
+.stability-bar {
+  height:10px; background:rgba(0,0,0,0.4); border-radius:5px;
+  border:1px solid var(--border); overflow:hidden; margin-top:4px;
+}
+.stability-fill {
+  height:100%; border-radius:5px; transition:width 0.3s;
+}
+
+#pidEventLog {
+  background:rgba(0,0,0,0.4); border:1px solid var(--border);
+  border-radius:4px; height:100px; overflow-y:auto;
+  padding:8px; font-family:'Share Tech Mono',monospace; font-size:10px;
+}
+.log-entry { margin-bottom:3px; }
+.log-entry.info { color:var(--cyan); }
+.log-entry.warn { color:var(--yellow); }
+.log-entry.err { color:var(--red); }
+.log-entry.ok { color:var(--green); }
+
+/* ==============================
+   MODULE 2: 3D CONTROL PANEL
+   ============================== */
+
+.cabinet-container {
+  perspective: 1200px;
+  display:flex; justify-content:center; align-items:flex-start;
+  gap:30px; flex-wrap:wrap;
+}
+.cabinet-wrapper {
+  position:relative; display:inline-block;
+}
+.cabinet-3d {
+  width: 380px;
+  transform-style: preserve-3d;
+  transition: transform 0.6s;
+}
+.cabinet-3d.door-open {
+  transform: rotateY(-25deg);
+}
+.cabinet-body {
+  background: linear-gradient(160deg, #1a2a3a 0%, #0d1a28 60%, #080f1a 100%);
+  border: 2px solid #2a4060;
+  border-radius:8px;
+  padding: 14px;
+  box-shadow:
+    4px 4px 0 #05090f,
+    8px 8px 0 #030608,
+    inset 0 0 40px rgba(0,0,0,0.5),
+    0 0 30px rgba(0,100,200,0.15);
+  position:relative;
+}
+.cabinet-header {
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:12px; padding-bottom:8px;
+  border-bottom: 1px solid rgba(0,180,255,0.2);
+}
+.cabinet-header .name {
+  font-family:'Rajdhani',sans-serif; font-size:11px; font-weight:700;
+  color:var(--cyan); letter-spacing:2px;
+}
+.cabinet-temp-display {
+  font-family:'Share Tech Mono',monospace; font-size:11px;
+  color:var(--orange3);
+}
+
+/* PLC Rack */
+.plc-rack {
+  background: #080f1a;
+  border: 1px solid #1a2a3a;
+  border-radius:4px;
+  padding: 8px;
+  margin-bottom: 10px;
+  position:relative;
+}
+.rack-label {
+  font-family:'Share Tech Mono',monospace; font-size:8px;
+  color:#3a5a7a; letter-spacing:1px; margin-bottom:6px;
+}
+.rack-modules {
+  display:flex; gap:4px; align-items:flex-end;
+}
+.module-slot {
+  position:relative; cursor:pointer;
+  transition: all 0.2s;
+}
+.module-slot:hover { transform:translateY(-3px); }
+.module-slot .m-body {
+  border-radius:3px; padding:4px 3px;
+  display:flex; flex-direction:column;
+  align-items:center; gap:2px;
+  font-family:'Share Tech Mono',monospace; font-size:7px;
+  border: 1px solid rgba(0,0,0,0.5);
+  position:relative; overflow:hidden;
+}
+.m-cpu { width:44px; height:70px; background:linear-gradient(180deg,#1a3a5a,#0a2030); border-color:#2a5a8a; color:var(--cyan); }
+.m-di { width:28px; height:60px; background:linear-gradient(180deg,#1a2a1a,#0a180a); border-color:#2a4a2a; color:var(--green); }
+.m-do { width:28px; height:60px; background:linear-gradient(180deg,#2a1a0a,#180f04); border-color:#4a2a0a; color:var(--orange); }
+.m-ai { width:28px; height:60px; background:linear-gradient(180deg,#1a1a3a,#0a0a20); border-color:#2a2a5a; color:var(--purple); }
+.m-vfd { width:38px; height:80px; background:linear-gradient(180deg,#2a1a0a,#150d05); border-color:#5a3a0a; color:var(--orange3); }
+.m-psu { width:32px; height:75px; background:linear-gradient(180deg,#2a2a0a,#151505); border-color:#5a5a0a; color:var(--yellow); }
+.m-eth { width:26px; height:55px; background:linear-gradient(180deg,#0a2a2a,#051515); border-color:#0a4a4a; color:var(--cyan); }
+
+.led-strip {
+  display:flex; gap:2px; flex-wrap:wrap; justify-content:center;
+  margin: 2px 0;
+}
+.led {
+  width:4px; height:4px; border-radius:50%;
+  animation: ledBlink 1s ease-in-out infinite;
+}
+.led.g { background:var(--green); box-shadow:0 0 4px var(--green); }
+.led.r { background:var(--red); box-shadow:0 0 4px var(--red); }
+.led.o { background:var(--orange); box-shadow:0 0 4px var(--orange); animation-delay:0.3s; }
+.led.c { background:var(--cyan); box-shadow:0 0 4px var(--cyan); animation-delay:0.6s; }
+.led.off { background:#1a2a3a; box-shadow:none; animation:none; }
+@keyframes ledBlink { 0%,100%{opacity:1;} 50%{opacity:0.4;} }
+
+.module-label {
+  font-size:6px; text-align:center; margin-top:auto;
+  letter-spacing:0.5px; opacity:0.8;
+}
+
+/* IO Terminal blocks */
+.terminal-section {
+  margin-bottom:10px;
+}
+.terminal-strip {
+  display:flex; gap:2px; flex-wrap:wrap;
+}
+.terminal {
+  width:12px; height:18px; background:#1a1a1a;
+  border:1px solid #2a3a4a; border-radius:2px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:6px; color:#3a5a7a;
+  position:relative; cursor:pointer;
+  transition:all 0.2s;
+}
+.terminal:hover { border-color:var(--orange); }
+.terminal.powered { background:#0a1a08; border-color:#2a4a2a; }
+.terminal.powered::after {
+  content:''; position:absolute; top:0; left:50%;
+  transform:translateX(-50%); width:2px; height:4px;
+  background:var(--green); border-radius:0 0 1px 1px;
+}
+.wire-line {
+  height:2px; background:linear-gradient(90deg, var(--green), var(--cyan), var(--orange));
+  margin: 4px 0; border-radius:1px;
+  animation: wireFlow 3s linear infinite;
+  background-size: 30px 100%;
+}
+@keyframes wireFlow {
+  0%{background-position:0 0;} 100%{background-position:30px 0;}
+}
+
+/* Fan */
+.cabinet-fan {
+  width:30px; height:30px; border:2px solid #1a3a5a; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  background:radial-gradient(#060e16,#0a1828);
+  overflow:hidden; position:relative; cursor:pointer;
+}
+.fan-blade {
+  width:100%; height:100%;
+  background: conic-gradient(
+    transparent 0deg, rgba(0,180,255,0.3) 30deg,
+    transparent 60deg, rgba(0,180,255,0.3) 90deg,
+    transparent 120deg, rgba(0,180,255,0.3) 150deg,
+    transparent 180deg, rgba(0,180,255,0.3) 210deg,
+    transparent 240deg, rgba(0,180,255,0.3) 270deg,
+    transparent 300deg, rgba(0,180,255,0.3) 330deg,
+    transparent 360deg
+  );
+  border-radius:50%;
+  animation: fanSpin 0.5s linear infinite;
+}
+@keyframes fanSpin { from{transform:rotate(0)} to{transform:rotate(360deg)} }
+
+/* Cabinet Door */
+.cabinet-door-btn {
+  position:absolute; bottom:10px; right:10px;
+}
+.fault-highlight {
+  animation: faultGlow 1s ease-in-out infinite;
+  border-color: var(--red) !important;
+}
+@keyframes faultGlow {
+  0%,100%{box-shadow:0 0 5px var(--red);} 50%{box-shadow:0 0 20px var(--red), 0 0 40px rgba(255,51,85,0.3);}
+}
+
+/* Hover tooltip */
+.diag-tooltip {
+  position:fixed; z-index:9999;
+  background:rgba(5,13,26,0.97); border:1px solid var(--orange);
+  border-radius:6px; padding:10px 14px;
+  font-family:'Share Tech Mono',monospace; font-size:10px;
+  color:var(--text); pointer-events:none;
+  max-width:200px; display:none;
+  box-shadow: var(--orange-glow);
+}
+
+/* ==============================
+   MODULE 3: SCADA DASHBOARD
+   ============================== */
+
+.scada-screen {
+  background: #020b14;
+  border: 2px solid var(--border);
+  border-radius:8px; padding:16px;
+  position:relative; overflow:hidden;
+}
+.scada-screen::after {
+  content:''; position:absolute; inset:0;
+  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
+  pointer-events:none;
+}
+
+/* Alarm banner */
+.alarm-banner {
+  background: linear-gradient(90deg, rgba(255,51,85,0.15), rgba(255,51,85,0.05), rgba(255,51,85,0.15));
+  border: 1px solid var(--red);
+  border-radius:4px; padding:6px 14px;
+  display:flex; align-items:center; gap:10px; margin-bottom:14px;
+  animation: alarmPulse 2s ease-in-out infinite;
+}
+@keyframes alarmPulse { 0%,100%{opacity:1;} 50%{opacity:0.7;} }
+.alarm-icon { color:var(--red); font-size:16px; }
+.alarm-text { font-family:'Share Tech Mono',monospace; font-size:10px; color:var(--red); flex:1; }
+.alarm-count {
+  background:var(--red); color:#fff;
+  font-family:'Rajdhani',sans-serif; font-size:13px; font-weight:700;
+  padding:2px 8px; border-radius:3px;
+}
+
+/* Tank levels */
+.tank-group { display:flex; gap:16px; align-items:flex-end; flex-wrap:wrap; }
+.tank-container {
+  display:flex; flex-direction:column; align-items:center; gap:6px;
+  cursor:pointer;
+}
+.tank-body {
+  width:60px; height:100px;
+  background: rgba(0,0,0,0.5);
+  border: 2px solid var(--border);
+  border-radius: 4px 4px 2px 2px;
+  position:relative; overflow:hidden;
+}
+.tank-fill {
+  position:absolute; bottom:0; left:0; right:0;
+  border-radius: 0 0 2px 2px;
+  transition: height 1s ease;
+}
+.tank-fill.blue { background: linear-gradient(180deg, rgba(0,150,255,0.4), rgba(0,80,200,0.8)); }
+.tank-fill.orange-l { background: linear-gradient(180deg, rgba(255,180,0,0.4), rgba(200,100,0,0.8)); }
+.tank-fill.white { background: linear-gradient(180deg, rgba(255,255,255,0.3), rgba(200,200,255,0.6)); }
+.tank-fill.green-l { background: linear-gradient(180deg, rgba(0,255,100,0.3), rgba(0,150,50,0.7)); }
+.tank-level-text {
+  position:absolute; top:50%; left:50%;
+  transform:translate(-50%,-50%);
+  font-family:'Rajdhani',sans-serif; font-weight:700; font-size:15px; color:#fff;
+  text-shadow: 0 0 10px rgba(0,0,0,0.8); z-index:1;
+}
+.tank-label {
+  font-family:'Share Tech Mono',monospace; font-size:9px; color:var(--text2);
+  text-align:center; max-width:70px; line-height:1.2;
+}
+.tank-% {
+  font-family:'Rajdhani',sans-serif; font-size:11px; color:var(--cyan);
+}
+
+/* Piping SVG */
+.pipe-svg { width:100%; overflow:visible; }
+.pipe-flow-line {
+  fill:none; stroke-width:4;
+  stroke-linecap:round;
+}
+.pipe-flow-anim {
+  stroke-dasharray: 8 6;
+  animation: pipeAnim 1s linear infinite;
+}
+@keyframes pipeAnim { from{stroke-dashoffset:0;} to{stroke-dashoffset:-28;} }
+
+/* Process indicators */
+.proc-indicator {
+  display:flex; align-items:center; gap:8px;
+  padding:8px 12px;
+  background:rgba(0,0,0,0.3); border:1px solid var(--border);
+  border-radius:4px; margin-bottom:6px;
+}
+.proc-led {
+  width:10px; height:10px; border-radius:50%;
+  flex-shrink:0;
+}
+.proc-led.running { background:var(--green); box-shadow:0 0 8px var(--green); animation:blink 2s infinite; }
+.proc-led.stopped { background:var(--red); }
+.proc-led.warning { background:var(--yellow); animation:blink 0.8s infinite; }
+.proc-name { font-family:'Exo 2',sans-serif; font-size:11px; color:var(--text); flex:1; }
+.proc-val { font-family:'Rajdhani',sans-serif; font-size:14px; font-weight:700; }
+
+/* OEE Display */
+.oee-circle {
+  width:100px; height:100px;
+  border-radius:50%; position:relative;
+  display:flex; align-items:center; justify-content:center;
+  background: conic-gradient(var(--green) 0%, var(--green) 78%, rgba(255,255,255,0.05) 78%);
+  flex-shrink:0;
+}
+.oee-circle::before {
+  content:''; position:absolute;
+  width:80px; height:80px; border-radius:50%;
+  background: var(--navy2);
+}
+.oee-val {
+  position:relative; z-index:1;
+  font-family:'Rajdhani',sans-serif; font-size:22px; font-weight:700; color:var(--green);
+}
+
+/* Production counter */
+.prod-counter {
+  font-family:'Rajdhani',sans-serif; font-size:36px; font-weight:700;
+  color:var(--cyan); text-align:center;
+  text-shadow: 0 0 20px var(--cyan2);
+}
+.prod-unit { font-size:12px; color:var(--text2); font-family:'Share Tech Mono',monospace; }
+
+/* Event log */
+.event-log {
+  background:rgba(0,0,0,0.5); border:1px solid var(--border);
+  border-radius:4px; height:140px; overflow-y:auto; padding:8px;
+  font-family:'Share Tech Mono',monospace; font-size:10px;
+}
+.ev { display:flex; gap:8px; margin-bottom:4px; line-height:1.4; }
+.ev .ts { color:var(--gray); flex-shrink:0; }
+.ev .msg { }
+.ev.ev-info { color:var(--cyan); }
+.ev.ev-warn { color:var(--yellow); }
+.ev.ev-alarm { color:var(--red); }
+.ev.ev-ok { color:var(--green); }
+
+/* Trend mini-chart */
+canvas.trend-canvas {
+  width:100%; height:80px;
+  background:rgba(0,0,0,0.5); border:1px solid var(--border);
+  border-radius:4px; display:block;
+}
+
+/* ==============================
+   MODULE 4: EVALUATION DASHBOARD
+   ============================== */
+
+.eval-header-row {
+  display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px;
+}
+.candidate-form input, .candidate-form select {
+  width:100%; padding:8px 12px;
+  background:rgba(0,0,0,0.4); border:1px solid var(--border);
+  border-radius:4px; color:var(--text);
+  font-family:'Exo 2',sans-serif; font-size:13px;
+  margin-bottom:8px; outline:none;
+  transition: border-color 0.2s;
+}
+.candidate-form input:focus, .candidate-form select:focus {
+  border-color: var(--orange);
+}
+.candidate-form label {
+  display:block; font-family:'Share Tech Mono',monospace;
+  font-size:9px; color:var(--text2); letter-spacing:1px; margin-bottom:3px;
+}
+
+/* Score bars */
+.score-bar-row {
+  display:flex; align-items:center; gap:10px; margin-bottom:10px;
+}
+.score-bar-label {
+  font-family:'Share Tech Mono',monospace; font-size:10px;
+  color:var(--text2); width:160px; flex-shrink:0;
+}
+.score-bar-track {
+  flex:1; height:14px; background:rgba(0,0,0,0.4);
+  border:1px solid var(--border); border-radius:7px; overflow:hidden;
+  cursor:pointer;
+}
+.score-bar-fill {
+  height:100%; border-radius:7px;
+  transition:width 0.5s ease;
+}
+.score-bar-fill.cyan-f { background: linear-gradient(90deg, var(--cyan2), var(--cyan)); }
+.score-bar-fill.orange-f { background: linear-gradient(90deg, var(--orange), var(--orange2)); }
+.score-bar-fill.green-f { background: linear-gradient(90deg, var(--green2), var(--green)); }
+.score-bar-fill.purple-f { background: linear-gradient(90deg, #6622cc, var(--purple)); }
+.score-bar-fill.yellow-f { background: linear-gradient(90deg, #ccaa00, var(--yellow)); }
+.score-bar-val {
+  font-family:'Rajdhani',sans-serif; font-weight:700;
+  color:#fff; width:36px; text-align:right;
+}
+
+/* Radar chart */
+canvas#radarChart {
+  display:block; margin:0 auto;
+}
+
+/* Recommendation */
+.recommendation-box {
+  padding:16px 20px;
+  border-radius:8px; text-align:center;
+  margin-top:12px;
+}
+.rec-hire { background:rgba(0,255,136,0.1); border:2px solid var(--green); }
+.rec-consider { background:rgba(255,221,0,0.1); border:2px solid var(--yellow); }
+.rec-train { background:rgba(255,107,0,0.1); border:2px solid var(--orange); }
+.rec-reject { background:rgba(255,51,85,0.1); border:2px solid var(--red); }
+.rec-label {
+  font-family:'Rajdhani',sans-serif; font-size:28px; font-weight:700;
+  letter-spacing:4px; text-transform:uppercase;
+}
+.rec-sub { font-family:'Share Tech Mono',monospace; font-size:10px; margin-top:4px; }
+
+/* Risk indicator */
+.risk-meter {
+  display:flex; align-items:center; gap:8px; margin-top:10px;
+}
+.risk-track {
+  flex:1; height:8px; border-radius:4px; overflow:hidden;
+  background:linear-gradient(90deg,var(--green),var(--yellow),var(--orange),var(--red));
+  position:relative;
+}
+.risk-needle {
+  position:absolute; top:-2px; width:4px; height:12px;
+  background:#fff; border-radius:2px;
+  transition:left 0.5s;
+  transform:translateX(-2px);
+}
+
+/* Strengths / Weaknesses */
+.sw-tag {
+  display:inline-block; padding:3px 10px; border-radius:12px;
+  font-size:10px; margin:3px;
+  font-family:'Exo 2',sans-serif;
+}
+.sw-tag.strong { background:rgba(0,255,136,0.15); color:var(--green); border:1px solid rgba(0,255,136,0.3); }
+.sw-tag.weak { background:rgba(255,51,85,0.15); color:var(--red); border:1px solid rgba(255,51,85,0.3); }
+
+/* PRINT STYLES */
+@media print {
+  body { background:#fff !important; color:#000 !important; font-size:12px; }
+  #topbar, #sidebar, .toggle-btn, .btn-orange, .btn-cyan, .btn-red, .btn-green { display:none !important; }
+  #main { margin:0 !important; padding:16px !important; }
+  .module-section { display:none !important; }
+  #evalModule { display:block !important; }
+  .card { background:#f5f8fc !important; border:1px solid #ccc !important; color:#000 !important; page-break-inside:avoid; }
+  .card::before { display:none; }
+  .page-title, .card-title, .pid-metric .value, .prod-counter { color:#000 !important; text-shadow:none !important; }
+  .v-cyan, .v-orange, .v-green { color:#000 !important; }
+  canvas { border:1px solid #ccc !important; }
+  .print-show { display:block !important; }
+  .print-header { display:block !important; }
+  * { animation:none !important; transition:none !important; }
+  .alarm-banner { background:#fee !important; color:red !important; animation:none !important; }
+}
+.print-header { display:none; }
+
+/* Animated loader dots */
+.ld { display:inline-block; }
+.ld::after { content:'...'; animation: ldots 1.2s steps(4,end) infinite; }
+@keyframes ldots { 0%{content:'.';} 33%{content:'..';} 66%{content:'...';} 100%{content:'';} }
+
+/* Horizontal divider */
+.hdivider { height:1px; background:var(--border); margin:14px 0; }
+
+/* Flashing tag */
+.flash-tag {
+  display:inline-block; padding:2px 8px; border-radius:3px;
+  font-family:'Share Tech Mono',monospace; font-size:9px; letter-spacing:1px;
+  animation:flashTag 1s ease-in-out infinite;
+}
+@keyframes flashTag { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+.ft-red { background:rgba(255,51,85,0.2); color:var(--red); border:1px solid var(--red); }
+.ft-green { background:rgba(0,255,136,0.2); color:var(--green); border:1px solid var(--green); }
+.ft-orange { background:rgba(255,107,0,0.2); color:var(--orange); border:1px solid var(--orange); }
+
+/* Help text */
+.help-text { font-size:10px; color:var(--text2); margin-top:4px; font-style:italic; }
+
+/* Eval ID */
+.eval-id {
+  font-family:'Share Tech Mono',monospace; font-size:10px; color:var(--text2);
+  letter-spacing:1px;
+}
+
+/* Unique grid layout for scada */
+.scada-grid {
+  display:grid;
+  grid-template-columns: 2fr 1.5fr 1fr;
+  gap:14px;
+}
+.scada-right { display:flex; flex-direction:column; gap:14px; }
+
+/* Conveyor belt animation */
+.conveyor {
+  height:20px; background:rgba(0,0,0,0.3); border:1px solid var(--border);
+  border-radius:4px; overflow:hidden; position:relative; margin-top:4px;
+}
+.conveyor-belt {
+  position:absolute; top:0; left:0; right:0; bottom:0;
+  background: repeating-linear-gradient(90deg,
+    rgba(255,255,255,0.05) 0px,
+    rgba(255,255,255,0.05) 10px,
+    rgba(0,0,0,0.1) 10px,
+    rgba(0,0,0,0.1) 20px
+  );
+  background-size:20px 100%;
+  animation: conveyorMove 0.6s linear infinite;
+}
+@keyframes conveyorMove { from{background-position:0 0;} to{background-position:20px 0;} }
+.conveyor-item {
+  position:absolute; width:16px; height:12px;
+  background:rgba(255,180,100,0.7); border-radius:3px; top:4px;
+  animation:conveyorItem 3s linear infinite;
+}
+@keyframes conveyorItem { from{left:-20px;} to{left:calc(100% + 20px);} }
+.conveyor-item:nth-child(2){animation-delay:1s;}
+.conveyor-item:nth-child(3){animation-delay:2s;}
+
+/* Compressor runtime */
+.compressor-ring {
+  width:70px; height:70px; border-radius:50%;
+  border:3px solid var(--cyan2);
+  display:flex; align-items:center; justify-content:center;
+  background:radial-gradient(#051018,#0a2030);
+  box-shadow: var(--glow);
+  animation: compressorPulse 2s ease-in-out infinite;
+}
+@keyframes compressorPulse { 0%,100%{box-shadow:0 0 10px var(--cyan2);} 50%{box-shadow:0 0 25px var(--cyan);} }
+.comp-val { font-family:'Rajdhani',sans-serif; font-size:14px; font-weight:700; color:var(--cyan); text-align:center; }
+
+/* Historical trend placeholder */
+canvas.hist-canvas {
+  width:100%; height:90px;
+  background:rgba(0,0,0,0.4); border:1px solid var(--border);
+  border-radius:4px; display:block;
+}
+
+/* ==============================
+   MODULE 5: VIRTUAL PLANT OVERVIEW
+   ============================== */
+
+/* Animated grid background */
+.vp-bg {
+  position:absolute; inset:0; pointer-events:none; z-index:0;
+  background-image:
+    linear-gradient(rgba(0,180,255,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,180,255,0.04) 1px, transparent 1px);
+  background-size: 40px 40px;
+  animation: vpGridMove 20s linear infinite;
+}
+@keyframes vpGridMove { from{background-position:0 0;} to{background-position:40px 40px;} }
+
+/* Plant canvas container */
+#plantCanvas {
+  display:block;
+  width:100%;
+  background: #020b14;
+  border: 1px solid var(--border);
+  border-radius:8px;
+  cursor:crosshair;
+  transition: transform 0.4s cubic-bezier(0.25,0.46,0.45,0.94);
+}
+
+.plant-layout-wrap {
+  position:relative;
+  overflow:hidden;
+  border-radius:8px;
+  border:1px solid var(--border);
+  background: #020b14;
+}
+
+/* Presentation narration box */
+#vpNarration {
+  background: linear-gradient(135deg, rgba(10,22,40,0.97), rgba(5,15,26,0.97));
+  border: 1px solid var(--orange);
+  border-radius:8px;
+  padding:16px 20px;
+  position:relative;
+  overflow:hidden;
+  min-height:90px;
+}
+#vpNarration::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:2px;
+  background:linear-gradient(90deg,transparent,var(--orange),transparent);
+}
+.narration-step {
+  font-family:'Share Tech Mono',monospace;
+  font-size:10px; color:var(--orange3); letter-spacing:2px;
+  margin-bottom:6px;
+}
+.narration-title {
+  font-family:'Rajdhani',sans-serif; font-size:20px; font-weight:700; color:#fff;
+  margin-bottom:6px;
+}
+.narration-text {
+  font-family:'Exo 2',sans-serif; font-size:12px; color:var(--text);
+  line-height:1.7;
+}
+.narration-tags {
+  display:flex; gap:6px; flex-wrap:wrap; margin-top:8px;
+}
+.narration-tag {
+  font-family:'Share Tech Mono',monospace; font-size:9px;
+  padding:2px 8px; border-radius:3px; letter-spacing:1px;
+}
+.ntag-plc { background:rgba(0,212,255,0.15); color:var(--cyan); border:1px solid rgba(0,212,255,0.3); }
+.ntag-io { background:rgba(255,107,0,0.15); color:var(--orange); border:1px solid rgba(255,107,0,0.3); }
+.ntag-kpi { background:rgba(0,255,136,0.15); color:var(--green); border:1px solid rgba(0,255,136,0.3); }
+
+/* Presentation controls */
+.pres-controls {
+  display:flex; align-items:center; gap:8px; flex-wrap:wrap;
+}
+.pres-btn {
+  display:flex; align-items:center; gap:6px;
+  padding:7px 14px; border-radius:4px; cursor:pointer;
+  font-family:'Rajdhani',sans-serif; font-size:13px; font-weight:600;
+  letter-spacing:1px; border:none; transition:all 0.2s;
+}
+.pres-btn.play { background:var(--green2); color:#000; }
+.pres-btn.play:hover { background:var(--green); box-shadow:0 0 15px rgba(0,255,136,0.4); }
+.pres-btn.pause { background:rgba(255,221,0,0.2); color:var(--yellow); border:1px solid var(--yellow); }
+.pres-btn.pause:hover { background:var(--yellow); color:#000; }
+.pres-btn.nav { background:rgba(0,180,255,0.1); color:var(--cyan); border:1px solid var(--cyan2); }
+.pres-btn.nav:hover { background:var(--cyan2); color:#000; }
+.pres-btn.stop { background:rgba(255,51,85,0.1); color:var(--red); border:1px solid var(--red); }
+.pres-btn.stop:hover { background:var(--red); color:#fff; }
+
+/* Step progress */
+.step-dots {
+  display:flex; gap:6px; align-items:center;
+}
+.step-dot {
+  width:8px; height:8px; border-radius:50%;
+  background: rgba(255,255,255,0.15);
+  border:1px solid rgba(255,255,255,0.2);
+  transition:all 0.3s;
+  cursor:pointer;
+}
+.step-dot.active {
+  background: var(--orange);
+  border-color: var(--orange);
+  box-shadow: 0 0 8px var(--orange);
+}
+.step-dot.done {
+  background: var(--green2);
+  border-color: var(--green2);
+}
+
+/* KPI overlay panel */
+#vpKpiPanel {
+  background: linear-gradient(135deg, rgba(10,22,40,0.98), rgba(5,13,26,0.98));
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:14px;
+  transition: all 0.3s;
+}
+.kpi-row {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:5px 0; border-bottom:1px solid rgba(0,180,255,0.08);
+}
+.kpi-row:last-child { border-bottom:none; }
+.kpi-row .k-label {
+  font-family:'Share Tech Mono',monospace; font-size:9px;
+  color:var(--text2); letter-spacing:1px;
+}
+.kpi-row .k-val {
+  font-family:'Rajdhani',sans-serif; font-size:16px; font-weight:700;
+}
+
+/* Digital twin info panel */
+#vpInfoPanel {
+  background: linear-gradient(135deg, rgba(10,22,40,0.98), rgba(5,13,26,0.98));
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:14px;
+  font-family:'Share Tech Mono',monospace; font-size:10px;
+  line-height:1.8;
+}
+.info-row { display:flex; gap:8px; }
+.info-key { color:var(--text2); width:90px; flex-shrink:0; }
+.info-val { color:var(--text); }
+.info-section {
+  margin-bottom:8px; padding-bottom:8px;
+  border-bottom:1px solid rgba(0,180,255,0.1);
+}
+.info-heading {
+  font-family:'Rajdhani',sans-serif; font-size:11px; font-weight:700;
+  color:var(--orange3); letter-spacing:2px; text-transform:uppercase;
+  margin-bottom:6px; display:flex; align-items:center; gap:6px;
+}
+
+/* Recruiter mode toggle */
+.recruiter-toggle-wrap {
+  display:flex; align-items:center; gap:10px;
+  padding:8px 14px;
+  background:rgba(255,107,0,0.08);
+  border:1px solid rgba(255,107,0,0.2);
+  border-radius:6px;
+}
+.toggle-switch {
+  position:relative; width:36px; height:18px;
+  display:inline-block; cursor:pointer;
+}
+.toggle-switch input { opacity:0; width:0; height:0; }
+.toggle-track {
+  position:absolute; inset:0;
+  background:rgba(0,0,0,0.5); border-radius:9px;
+  border:1px solid var(--border); transition:0.3s;
+}
+.toggle-switch input:checked + .toggle-track { background:rgba(255,107,0,0.4); border-color:var(--orange); }
+.toggle-thumb {
+  position:absolute; width:14px; height:14px;
+  background:#fff; border-radius:50%; top:2px; left:2px;
+  transition:0.3s;
+}
+.toggle-switch input:checked ~ .toggle-thumb { left:20px; background:var(--orange); }
+
+/* Recruiter overlay */
+.recruiter-overlay {
+  background:rgba(255,107,0,0.06);
+  border:1px solid rgba(255,107,0,0.25);
+  border-radius:6px; padding:12px; margin-top:10px;
+  display:none;
+}
+.recruiter-overlay.visible { display:block; }
+.rec-skill {
+  display:flex; align-items:center; gap:8px;
+  margin-bottom:6px; font-size:11px;
+}
+.rec-skill-dot { width:8px; height:8px; border-radius:50%; background:var(--orange); }
+
+/* View controls */
+.view-controls {
+  display:flex; gap:6px;
+}
+.vctrl-btn {
+  padding:5px 10px; border-radius:4px; cursor:pointer;
+  font-family:'Share Tech Mono',monospace; font-size:10px;
+  background:rgba(0,0,0,0.4); color:var(--text2);
+  border:1px solid var(--border); transition:all 0.2s;
+}
+.vctrl-btn:hover { border-color:var(--cyan); color:var(--cyan); }
+.vctrl-btn.active-view { border-color:var(--orange); color:var(--orange); background:rgba(255,107,0,0.1); }
+
+/* Section status badges on canvas tooltip */
+.area-tooltip {
+  position:fixed; z-index:9998;
+  background:rgba(5,13,26,0.97); border:1px solid var(--cyan2);
+  border-radius:6px; padding:8px 12px;
+  font-family:'Share Tech Mono',monospace; font-size:10px;
+  pointer-events:none; display:none;
+  box-shadow: var(--glow);
+  max-width:220px;
+}
+
+/* Plant flow progress bar */
+.flow-progress {
+  height:4px; background:rgba(0,0,0,0.4); border-radius:2px; overflow:hidden;
+}
+.flow-progress-fill {
+  height:100%;
+  background:linear-gradient(90deg,var(--cyan2),var(--orange));
+  border-radius:2px;
+  transition:width 0.8s ease;
+  animation:flowPulse 2s ease-in-out infinite;
+}
+@keyframes flowPulse { 0%,100%{opacity:1;} 50%{opacity:0.7;} }
+
+/* Disturbance buttons */
+.dist-btn {
+  display:inline-flex; align-items:center; gap:6px;
+  padding:6px 12px; border-radius:4px; cursor:pointer; transition:all 0.2s;
+  font-family:'Exo 2',sans-serif; font-size:11px; font-weight:600;
+  border:1px solid var(--border); background:rgba(0,0,0,0.3); color:var(--text2);
+}
+.dist-btn:hover { color:var(--orange); border-color:var(--orange); background:rgba(255,107,0,0.1); }
+.dist-btn.active { color:var(--orange); border-color:var(--orange); background:rgba(255,107,0,0.15); }
+
+/* Eval score sliders */
+.eval-slider-wrap { margin-bottom:14px; }
+.eval-score-num {
+  font-family:'Rajdhani',sans-serif; font-size:28px; font-weight:700;
+  color:var(--orange); text-align:center;
+}
+.eval-score-label {
+  font-family:'Share Tech Mono',monospace; font-size:9px;
+  color:var(--text2); text-align:center; letter-spacing:1px;
+}
+
+/* Overall readiness gauge */
+.readiness-gauge {
+  position:relative; width:160px; height:80px; overflow:hidden; margin:0 auto;
+}
+.gauge-bg {
+  width:160px; height:160px; border-radius:80px 80px 0 0;
+  background:conic-gradient(
+    from -90deg,
+    var(--red) 0deg,
+    var(--orange) 60deg,
+    var(--yellow) 90deg,
+    var(--green) 120deg,
+    var(--green) 180deg
+  );
+  position:absolute; top:0;
+}
+.gauge-cover {
+  width:120px; height:60px; background:var(--navy2);
+  border-radius:60px 60px 0 0;
+  position:absolute; bottom:0; left:20px;
+}
+.gauge-needle {
+  width:2px; height:62px;
+  background:linear-gradient(180deg,#fff,rgba(255,255,255,0.2));
+  position:absolute; bottom:0; left:79px;
+  transform-origin: bottom center;
+  border-radius:1px 1px 0 0;
+  transition:transform 0.8s cubic-bezier(0.34,1.56,0.64,1);
+}
+.gauge-val {
+  position:absolute; bottom:-20px; left:0; right:0;
+  text-align:center;
+  font-family:'Rajdhani',sans-serif; font-size:22px; font-weight:700; color:var(--orange);
+}
+
+</style>
+</head>
+<body>
+
+<!-- TOOLTIP -->
+<div class="diag-tooltip" id="diagTooltip"></div>
+
+<!-- TOP BAR -->
+<div id="topbar">
+  <div class="brand">
+    <div class="logo"></div>
+    <div>
+      <div class="title">IADP Advanced Edition</div>
+      <div class="subtitle">SERBIA ICE CREAM MANUFACTURING SIMULATION SUITE &nbsp;|&nbsp; v3.7.2</div>
+    </div>
+  </div>
+  <div class="status-items">
+    <div class="status-pill"><div class="dot"></div>PLANT ONLINE</div>
+    <div class="status-pill"><div class="dot orange"></div>PLC: CONNECTED</div>
+    <div class="status-pill"><div class="dot yellow"></div>ALARMS: <span id="topAlarmCount">2</span></div>
+    <div class="status-pill" id="clockPill" style="border-color:rgba(255,107,0,0.3);">--:--:--</div>
+  </div>
+  <div class="badges">
+    <span class="badge iec">IEC 61131-3</span>
+    <span class="badge haccp">HACCP ✓</span>
+    <span class="badge v">IADP</span>
+  </div>
+</div>
+
+<!-- SIDEBAR -->
+<div id="sidebar">
+  <div class="sidebar-section">Navigation</div>
+  <div class="nav-item active" onclick="showModule('pidModule', this)">
+    <div class="icon">🎛️</div>
+    <div>PID Tuning Sim</div>
+    <div class="nav-badge">LIVE</div>
+  </div>
+  <div class="nav-item" onclick="showModule('cabinetModule', this)">
+    <div class="icon">🖥️</div>
+    <div>3D Control Panel</div>
+  </div>
+  <div class="nav-item" onclick="showModule('scadaModule', this)">
+    <div class="icon">📊</div>
+    <div>SCADA Dashboard</div>
+    <div class="nav-badge" style="color:var(--red);border-color:var(--red);background:rgba(255,51,85,0.2);">ALM</div>
+  </div>
+  <div class="nav-item" onclick="showModule('plantModule', this)">
+    <div class="icon">🎥</div>
+    <div>Virtual Plant Overview</div>
+    <div class="nav-badge" style="color:var(--cyan);border-color:var(--cyan2);background:rgba(0,212,255,0.1);">NEW</div>
+  </div>
+  <div class="nav-item" onclick="showModule('evalModule', this)">
+    <div class="icon">📋</div>
+    <div>Evaluation Panel</div>
+  </div>
+
+  <div class="sidebar-section" style="margin-top:12px;">Live KPIs</div>
+  <div class="sidebar-kpi">
+    <div class="kpi-label">FREEZER TEMP</div>
+    <div class="kpi-value" id="sidebarFreeze">-18.4°C</div>
+    <div class="kpi-sub">SP: -20°C &nbsp;|&nbsp; ±1.6°C</div>
+  </div>
+  <div class="sidebar-kpi">
+    <div class="kpi-label">PRODUCTION TODAY</div>
+    <div class="kpi-value" id="sidebarProd">0</div>
+    <div class="kpi-sub" style="color:var(--orange);">UNITS / TARGET 12,000</div>
+  </div>
+  <div class="sidebar-kpi">
+    <div class="kpi-label">OEE</div>
+    <div class="kpi-value" id="sidebarOEE">78.2%</div>
+    <div class="kpi-sub">↑ 2.1% vs yesterday</div>
+  </div>
+  <div class="sidebar-kpi">
+    <div class="kpi-label">SYSTEM HEALTH</div>
+    <div class="kpi-value" style="color:var(--green);" id="sidebarHealth">NOMINAL</div>
+    <div class="kpi-sub">No critical faults</div>
+  </div>
+  <div style="padding:12px 16px; margin-top:auto;">
+    <button class="toggle-btn btn-red" style="width:100%; font-size:11px;" onclick="resetAll()">⟳ RESET ALL SIMS</button>
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div id="main">
+
+<!-- ====== MODULE 1: PID ====== -->
+<div id="pidModule" class="module-section active">
+  <div class="page-header">
+    <div>
+      <div class="page-title">PID <span>Live Tuning</span> Simulation</div>
+      <div class="page-sub">ICE CREAM FREEZER TEMPERATURE CONTROL LOOP &nbsp;|&nbsp; IEC 61131-3 FUNCTION BLOCK FB_PID</div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <span id="modeLabel" class="flash-tag ft-green">AUTO MODE</span>
+      <button class="toggle-btn btn-cyan" id="modeBtn" onclick="toggleMode()">⇄ MANUAL</button>
+      <button class="toggle-btn btn-orange" onclick="resetPID()">↺ RESET</button>
+    </div>
+  </div>
+
+  <!-- Metric row -->
+  <div class="pid-display-row">
+    <div class="pid-metric">
+      <div class="label">PROCESS VALUE (PV)</div>
+      <div class="value v-cyan" id="pvDisplay">-18.4</div>
+      <div class="unit">°C</div>
+    </div>
+    <div class="pid-metric">
+      <div class="label">SETPOINT (SP)</div>
+      <div class="value v-orange" id="spDisplay">-20.0</div>
+      <div class="unit">°C</div>
+    </div>
+    <div class="pid-metric">
+      <div class="label">ERROR (E)</div>
+      <div class="value v-red" id="errDisplay">+1.6</div>
+      <div class="unit">°C</div>
+    </div>
+    <div class="pid-metric">
+      <div class="label">CONTROL OUTPUT</div>
+      <div class="value v-yellow" id="outDisplay">72.4</div>
+      <div class="unit">%</div>
+    </div>
+  </div>
+
+  <div class="grid-2" style="margin-bottom:14px;">
+    <div>
+      <!-- Chart -->
+      <div class="card" style="padding:12px;">
+        <div class="card-title">Temperature Trend — Real Time</div>
+        <canvas id="pidChart" width="600" height="220"></canvas>
+        <div style="display:flex;gap:12px;margin-top:8px;flex-wrap:wrap;">
+          <span style="font-size:10px;font-family:'Share Tech Mono',monospace;color:var(--cyan);">─ PV (Process)</span>
+          <span style="font-size:10px;font-family:'Share Tech Mono',monospace;color:var(--orange);">─ SP (Setpoint)</span>
+          <span style="font-size:10px;font-family:'Share Tech Mono',monospace;color:var(--yellow);">─ Output%</span>
+          <span style="font-size:10px;font-family:'Share Tech Mono',monospace;color:var(--purple);">─ Derivative</span>
+        </div>
+      </div>
+    </div>
+    <div>
+      <!-- PID Controls -->
+      <div class="card" style="margin-bottom:14px;">
+        <div class="card-title">PID Parameters</div>
+        <div class="slider-row">
+          <label>Kp</label>
+          <input type="range" id="kpSlider" min="0.1" max="10" step="0.1" value="2.0" oninput="updatePID()">
+          <div class="val" id="kpVal">2.0</div>
+        </div>
+        <div class="slider-row">
+          <label>Ki</label>
+          <input type="range" id="kiSlider" min="0" max="5" step="0.05" value="0.5" oninput="updatePID()">
+          <div class="val" id="kiVal">0.50</div>
+        </div>
+        <div class="slider-row">
+          <label>Kd</label>
+          <input type="range" id="kdSlider" min="0" max="5" step="0.05" value="0.8" oninput="updatePID()">
+          <div class="val" id="kdVal">0.80</div>
+        </div>
+        <div class="slider-row">
+          <label>SP (°C)</label>
+          <input type="range" id="spSlider" min="-30" max="-10" step="0.5" value="-20" oninput="updatePID()">
+          <div class="val" id="spSliderVal">-20°</div>
+        </div>
+      </div>
+      <!-- Disturbances -->
+      <div class="card">
+        <div class="card-title">Disturbance Injection</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
+          <div class="dist-btn" id="distDoor" onclick="injectDoor()">🚪 Door Open</div>
+          <div class="dist-btn" id="distComp" onclick="injectCompressor()">⚙️ Comp. Delay</div>
+          <div class="dist-btn" id="distLoad" onclick="injectLoad()">🧊 Load Surge</div>
+          <div class="dist-btn" id="distNoise" onclick="toggleNoise()">〜 Noise ON</div>
+        </div>
+        <div class="hdivider"></div>
+        <!-- Integral & derivative -->
+        <div style="display:flex;gap:10px;margin-bottom:8px;">
+          <div style="flex:1;">
+            <div class="label" style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text2);margin-bottom:4px;">INTEGRAL ACCUM</div>
+            <div class="pid-metric" style="padding:8px;">
+              <div class="value v-purple" id="integralDisplay" style="font-size:18px;">0.00</div>
+            </div>
+          </div>
+          <div style="flex:1;">
+            <div class="label" style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text2);margin-bottom:4px;">DERIVATIVE</div>
+            <div class="pid-metric" style="padding:8px;">
+              <div class="value v-yellow" id="derivDisplay" style="font-size:18px;">0.00</div>
+            </div>
+          </div>
+        </div>
+        <!-- Stability -->
+        <div style="margin-bottom:6px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <span style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text2);">STABILITY</span>
+            <span id="stabilityLabel" style="font-size:10px;color:var(--green);">STABLE</span>
+          </div>
+          <div class="stability-bar">
+            <div class="stability-fill" id="stabilityFill" style="width:78%;background:linear-gradient(90deg,var(--green2),var(--green));"></div>
+          </div>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-family:'Share Tech Mono',monospace;font-size:10px;">
+          <span>Settling: <span id="settlingTime" style="color:var(--cyan);">--s</span></span>
+          <span>Overshoot: <span id="overshootVal" style="color:var(--orange);">--%</span></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Event log -->
+  <div class="card">
+    <div class="card-title">PID Event Log</div>
+    <div id="pidEventLog"></div>
+  </div>
+</div>
+
+<!-- ====== MODULE 2: 3D CABINET ====== -->
+<div id="cabinetModule" class="module-section">
+  <div class="page-header">
+    <div>
+      <div class="page-title">3D <span>Control Panel</span> Simulation</div>
+      <div class="page-sub">ICE CREAM PLANT — MCC PANEL P-01 &nbsp;|&nbsp; CLICK COMPONENTS FOR DIAGNOSTICS</div>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button class="toggle-btn btn-orange" onclick="toggleCabinetDoor()">🚪 DOOR TOGGLE</button>
+      <button class="toggle-btn btn-cyan" onclick="injectCabinetFault()">⚡ INJECT FAULT</button>
+      <button class="toggle-btn btn-green" onclick="clearFaults()">✓ CLEAR FAULTS</button>
+    </div>
+  </div>
+
+  <div class="cabinet-container">
+    <!-- Main Cabinet -->
+    <div class="cabinet-wrapper">
+      <div class="cabinet-3d" id="cabinet3d">
+        <div class="cabinet-body">
+          <div class="cabinet-header">
+            <div>
+              <div class="name">PANEL P-01 / FREEZER CTRL</div>
+              <div style="font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--text2);">SN: SRB-2024-F001</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div class="cabinet-fan"><div class="fan-blade"></div></div>
+              <div class="cabinet-fan"><div class="fan-blade"></div></div>
+              <div class="cabinet-temp-display" id="cabinetTemp">34.2°C</div>
+            </div>
+          </div>
+
+          <!-- PLC Rack -->
+          <div class="plc-rack" id="plcRack">
+            <div class="rack-label">RACK-01 / SIMATIC S7-1500 PLC SYSTEM</div>
+            <div class="rack-modules">
+              <!-- CPU -->
+              <div class="module-slot" onmouseenter="showDiag(event,'CPU 1515F-2 PN<br>Status: RUN<br>Cycle: 2.4ms<br>DP: 8.2%<br>FW: V2.9.5')" onmouseleave="hideDiag()">
+                <div class="m-body m-cpu">
+                  <div class="led-strip"><div class="led g"></div><div class="led g"></div></div>
+                  <div style="font-size:6px;color:var(--cyan);text-align:center;margin-top:4px;">CPU<br>1515F</div>
+                  <div class="led-strip" style="margin-top:4px;"><div class="led c"></div><div class="led c"></div><div class="led off"></div></div>
+                  <div class="module-label">RUN</div>
+                </div>
+              </div>
+              <!-- DI -->
+              <div class="module-slot" id="diModule" onmouseenter="showDiag(event,'SM 321 DI 16x24VDC<br>Inputs: 12/16 ACTIVE<br>Volt: 24.1V<br>Status: OK')" onmouseleave="hideDiag()">
+                <div class="m-body m-di">
+                  <div class="led-strip"><div class="led g"></div><div class="led g"></div><div class="led off"></div></div>
+                  <div class="led-strip"><div class="led g"></div><div class="led off"></div><div class="led g"></div></div>
+                  <div class="led-strip"><div class="led off"></div><div class="led g"></div><div class="led g"></div></div>
+                  <div class="module-label">DI 16x</div>
+                </div>
+              </div>
+              <!-- DO -->
+              <div class="module-slot" onmouseenter="showDiag(event,'SM 322 DO 16x24VDC<br>Outputs: 9/16 ACTIVE<br>Load: 4.2A<br>Status: OK')" onmouseleave="hideDiag()">
+                <div class="m-body m-do">
+                  <div class="led-strip"><div class="led o"></div><div class="led off"></div><div class="led o"></div></div>
+                  <div class="led-strip"><div class="led o"></div><div class="led o"></div><div class="led off"></div></div>
+                  <div class="led-strip"><div class="led off"></div><div class="led o"></div><div class="led off"></div></div>
+                  <div class="module-label">DO 16x</div>
+                </div>
+              </div>
+              <!-- AI -->
+              <div class="module-slot" onmouseenter="showDiag(event,'SM 331 AI 8x13BIT<br>Channels: 6/8<br>Type: 4-20mA<br>Cal: Valid')" onmouseleave="hideDiag()">
+                <div class="m-body m-ai">
+                  <div class="led-strip"><div class="led g"></div><div class="led g"></div></div>
+                  <div style="font-size:7px;color:var(--purple);margin:4px 0;">4-20mA</div>
+                  <div class="led-strip"><div class="led g"></div><div class="led off"></div></div>
+                  <div class="module-label">AI 8x</div>
+                </div>
+              </div>
+              <!-- DO2 -->
+              <div class="module-slot" onmouseenter="showDiag(event,'SM 322 AO 4x12BIT<br>Outputs: 3/4<br>Type: 0-10V<br>Status: OK')" onmouseleave="hideDiag()">
+                <div class="m-body m-do">
+                  <div class="led-strip"><div class="led o"></div><div class="led o"></div></div>
+                  <div style="font-size:7px;color:var(--orange);margin:4px 0;">0-10V</div>
+                  <div class="led-strip"><div class="led off"></div><div class="led o"></div></div>
+                  <div class="module-label">AO 4x</div>
+                </div>
+              </div>
+              <!-- VFD -->
+              <div class="module-slot" id="vfdModule" onmouseenter="showDiag(event,'SINAMICS G120<br>VFD 7.5kW<br>Freq: 42.5Hz<br>I: 8.4A<br>Mode: REMOTE<br>Temp: 48°C')" onmouseleave="hideDiag()">
+                <div class="m-body m-vfd">
+                  <div class="led-strip"><div class="led o"></div><div class="led o"></div></div>
+                  <div style="font-size:6px;color:var(--orange3);text-align:center;margin-top:3px;">VFD<br>7.5kW</div>
+                  <div style="font-size:6px;color:var(--text2);margin:2px 0;">42.5Hz</div>
+                  <div class="led-strip"><div class="led g"></div><div class="led o"></div></div>
+                  <div class="module-label">RUNNING</div>
+                </div>
+              </div>
+              <!-- PSU -->
+              <div class="module-slot" onmouseenter="showDiag(event,'PM1507 24VDC/8A<br>In: 400VAC 3Ph<br>Out: 24.1V / 6.2A<br>OK')" onmouseleave="hideDiag()">
+                <div class="m-body m-psu">
+                  <div class="led-strip"><div class="led" style="background:var(--yellow);box-shadow:0 0 4px var(--yellow);"></div></div>
+                  <div style="font-size:6px;color:var(--yellow);text-align:center;margin-top:4px;">24VDC<br>8A PSU</div>
+                  <div style="font-size:7px;color:var(--text2);margin-top:6px;">24.1V</div>
+                  <div class="module-label">OK</div>
+                </div>
+              </div>
+              <!-- ETH -->
+              <div class="module-slot" onmouseenter="showDiag(event,'CP 1543-1 Industrial<br>Ethernet Module<br>IP: 192.168.1.10<br>Speed: 100Mbps<br>PROFINET: Active')" onmouseleave="hideDiag()">
+                <div class="m-body m-eth">
+                  <div class="led-strip"><div class="led c"></div></div>
+                  <div style="font-size:5px;color:var(--cyan);text-align:center;margin-top:3px;">PROFINET</div>
+                  <div class="led-strip" style="margin-top:2px;"><div class="led c"></div><div class="led off"></div></div>
+                  <div class="module-label">ETH</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Wire lines -->
+          <div class="wire-line"></div>
+
+          <!-- Terminal blocks -->
+          <div class="terminal-section">
+            <div class="rack-label" style="margin-bottom:4px;">TERMINAL BLOCKS — GROUP X1</div>
+            <div class="terminal-strip">
+              <div class="terminal powered" onmouseenter="showDiag(event,'X1:1 — 24VDC +<br>Compressor Motor')" onmouseleave="hideDiag()">+</div>
+              <div class="terminal powered" onmouseenter="showDiag(event,'X1:2 — 24VDC +<br>Evaporator Fan')" onmouseleave="hideDiag()">+</div>
+              <div class="terminal" onmouseenter="showDiag(event,'X1:3 — 0V<br>Common GND')" onmouseleave="hideDiag()">0</div>
+              <div class="terminal powered" onmouseenter="showDiag(event,'X1:4 — DI<br>Door Switch')" onmouseleave="hideDiag()">D</div>
+              <div class="terminal powered" onmouseenter="showDiag(event,'X1:5 — DI<br>Level Low')" onmouseleave="hideDiag()">D</div>
+              <div class="terminal" onmouseenter="showDiag(event,'X1:6 — AI<br>Temp PT100')" onmouseleave="hideDiag()">A</div>
+              <div class="terminal" onmouseenter="showDiag(event,'X1:7 — AI<br>Pressure 4-20mA')" onmouseleave="hideDiag()">A</div>
+              <div class="terminal powered" onmouseenter="showDiag(event,'X1:8 — DO<br>Solenoid Valve')" onmouseleave="hideDiag()">S</div>
+              <div class="terminal powered" onmouseenter="showDiag(event,'X1:9 — DO<br>Alarm Horn')" onmouseleave="hideDiag()">S</div>
+              <div class="terminal" onmouseenter="showDiag(event,'X1:10 — DO<br>Spare')" onmouseleave="hideDiag()">-</div>
+              <div class="terminal powered" onmouseenter="showDiag(event,'X1:11 — VFD EN<br>Enable Signal')" onmouseleave="hideDiag()">V</div>
+              <div class="terminal powered" onmouseenter="showDiag(event,'X1:12 — VFD REF<br>Speed Ref 0-10V')" onmouseleave="hideDiag()">V</div>
+              <div class="terminal" onmouseenter="showDiag(event,'X1:13 — PE<br>Protective Earth')" onmouseleave="hideDiag()">⏚</div>
+              <div class="terminal" onmouseenter="showDiag(event,'X1:14 — PE<br>Protective Earth')" onmouseleave="hideDiag()">⏚</div>
+            </div>
+          </div>
+
+          <div class="wire-line" style="background:linear-gradient(90deg,var(--orange),var(--yellow),var(--orange));"></div>
+
+          <!-- Status row -->
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;">
+            <div style="display:flex;gap:10px;">
+              <div style="text-align:center;">
+                <div class="led" style="margin:auto;width:10px;height:10px;" id="pwrLed"></div>
+                <div style="font-family:'Share Tech Mono',monospace;font-size:7px;color:var(--text2);margin-top:2px;">PWR</div>
+              </div>
+              <div style="text-align:center;">
+                <div class="led" style="margin:auto;width:10px;height:10px;" id="runLed"></div>
+                <div style="font-family:'Share Tech Mono',monospace;font-size:7px;color:var(--text2);margin-top:2px;">RUN</div>
+              </div>
+              <div style="text-align:center;">
+                <div class="led" style="margin:auto;width:10px;height:10px;" id="errLed"></div>
+                <div style="font-family:'Share Tech Mono',monospace;font-size:7px;color:var(--text2);margin-top:2px;">ERR</div>
+              </div>
+              <div style="text-align:center;">
+                <div class="led" style="margin:auto;width:10px;height:10px;" id="comLed"></div>
+                <div style="font-family:'Share Tech Mono',monospace;font-size:7px;color:var(--text2);margin-top:2px;">COM</div>
+              </div>
+            </div>
+            <div class="cabinet-door-btn">
+              <button class="toggle-btn btn-orange" style="font-size:10px;padding:4px 10px;" onclick="toggleCabinetDoor()">DOOR</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Info panels -->
+    <div style="flex:1;min-width:280px;display:flex;flex-direction:column;gap:14px;">
+      <div class="card">
+        <div class="card-title">Cabinet Diagnostics</div>
+        <div class="proc-indicator">
+          <div class="proc-led running"></div>
+          <div class="proc-name">CPU S7-1515F</div>
+          <div class="proc-val v-green" style="font-size:12px;">RUN</div>
+        </div>
+        <div class="proc-indicator">
+          <div class="proc-led running"></div>
+          <div class="proc-name">PROFINET Communication</div>
+          <div class="proc-val v-cyan" style="font-size:12px;">ACTIVE</div>
+        </div>
+        <div class="proc-indicator" id="vfdStatus">
+          <div class="proc-led running"></div>
+          <div class="proc-name">VFD Compressor Drive</div>
+          <div class="proc-val v-orange" style="font-size:12px;">42.5Hz</div>
+        </div>
+        <div class="proc-indicator" id="faultStatus">
+          <div class="proc-led stopped" style="animation:none;"></div>
+          <div class="proc-name">Fault Register</div>
+          <div class="proc-val v-green" style="font-size:12px;">CLEAR</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Cabinet Environment</div>
+        <div style="display:flex;gap:10px;">
+          <div class="pid-metric" style="flex:1;">
+            <div class="label">INTERNAL TEMP</div>
+            <div class="value v-yellow" id="cabTempDisp">34.2°C</div>
+          </div>
+          <div class="pid-metric" style="flex:1;">
+            <div class="label">24VDC BUS</div>
+            <div class="value v-green">24.1V</div>
+          </div>
+        </div>
+        <div style="margin-top:10px;">
+          <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text2);margin-bottom:4px;">THERMAL LOAD</div>
+          <div class="stability-bar" style="height:14px;">
+            <div class="stability-fill" style="width:58%;background:linear-gradient(90deg,var(--green2),var(--yellow));"></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--text2);font-family:'Share Tech Mono',monospace;margin-top:2px;">
+            <span>COOL</span><span>58%</span><span>HOT</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">IO Channel Map</div>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:9px;line-height:1.8;color:var(--text2);">
+          <div style="color:var(--green);">▸ I0.0 — Door Switch (NC)</div>
+          <div style="color:var(--green);">▸ I0.1 — Compressor Run FB</div>
+          <div style="color:var(--green);">▸ I0.2 — High Pressure SW</div>
+          <div style="color:var(--orange);">▸ I0.3 — Low Pressure SW</div>
+          <div style="color:var(--green);">▸ I0.4 — Fan Motor OL</div>
+          <div style="color:var(--green);">▸ Q0.0 — Compressor EN</div>
+          <div style="color:var(--green);">▸ Q0.1 — Solenoid Valve</div>
+          <div style="color:var(--orange);">▸ Q0.2 — Alarm Horn</div>
+          <div style="color:var(--green);">▸ IW64 — Temp PT100</div>
+          <div style="color:var(--green);">▸ QW64 — VFD Speed Ref</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== MODULE 3: SCADA ====== -->
+<div id="scadaModule" class="module-section">
+  <div class="page-header">
+    <div>
+      <div class="page-title">SCADA <span>Ice Cream Plant</span> Overview</div>
+      <div class="page-sub">REAL-TIME PROCESS MONITORING — SERBIA ICE CREAM MANUFACTURING LINE 1 &amp; 2</div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <span class="flash-tag ft-red" id="alarmFlash">⚠ 2 ACTIVE ALARMS</span>
+      <button class="toggle-btn btn-orange" onclick="ackAlarms()">✓ ACK ALARMS</button>
+      <button class="toggle-btn btn-cyan" onclick="injectScadaEvent()">+ EVENT</button>
+    </div>
+  </div>
+
+  <!-- Alarm Banner -->
+  <div class="alarm-banner" id="alarmBanner">
+    <div class="alarm-icon">⚠</div>
+    <div class="alarm-text">
+      <span id="alarmText">ALM-001: FREEZER TEMP HIGH — LINE 1 FREEZER &gt; -18°C  |  ALM-002: PASTEURIZER PRESSURE LOW — BELOW 2.5 BAR</span>
+    </div>
+    <div class="alarm-count" id="alarmCount">2</div>
+  </div>
+
+  <div class="scada-grid">
+    <!-- Left: Plant overview -->
+    <div>
+      <div class="scada-screen" style="margin-bottom:14px;">
+        <div style="font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:600;color:var(--orange3);letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:8px;">
+          <span style="width:3px;height:12px;background:var(--orange);display:inline-block;"></span>
+          INGREDIENT BATCHING
+        </div>
+        <div class="tank-group">
+          <div class="tank-container" onclick="selectTank('milk')">
+            <div class="tank-body">
+              <div class="tank-fill blue" id="tankMilk" style="height:72%;"></div>
+              <div class="tank-level-text">72%</div>
+            </div>
+            <div class="tank-%"><span id="tankMilkPct">72%</span></div>
+            <div class="tank-label">MILK TANK T-01</div>
+          </div>
+          <div class="tank-container" onclick="selectTank('cream')">
+            <div class="tank-body">
+              <div class="tank-fill white" id="tankCream" style="height:55%;"></div>
+              <div class="tank-level-text">55%</div>
+            </div>
+            <div class="tank-%"><span id="tankCreamPct">55%</span></div>
+            <div class="tank-label">CREAM TANK T-02</div>
+          </div>
+          <div class="tank-container" onclick="selectTank('sugar')">
+            <div class="tank-body">
+              <div class="tank-fill orange-l" id="tankSugar" style="height:88%;"></div>
+              <div class="tank-level-text">88%</div>
+            </div>
+            <div class="tank-%"><span id="tankSugarPct">88%</span></div>
+            <div class="tank-label">SUGAR SILO S-01</div>
+          </div>
+          <div class="tank-container" onclick="selectTank('flavor')">
+            <div class="tank-body" style="height:80px;width:50px;">
+              <div class="tank-fill green-l" id="tankFlavor" style="height:41%;"></div>
+              <div class="tank-level-text" style="font-size:12px;">41%</div>
+            </div>
+            <div class="tank-%"><span id="tankFlavorPct">41%</span></div>
+            <div class="tank-label">FLAVOR DOSING</div>
+          </div>
+        </div>
+
+        <!-- Piping SVG -->
+        <svg class="pipe-svg" height="40" style="margin:8px 0;">
+          <line x1="30" y1="10" x2="30" y2="30" stroke="var(--cyan2)" stroke-width="3" stroke-linecap="round"/>
+          <line x1="30" y1="30" x2="200" y2="30" class="pipe-flow-line pipe-flow-anim" stroke="var(--cyan2)"/>
+          <line x1="200" y1="30" x2="200" y2="10" stroke="var(--cyan2)" stroke-width="3"/>
+          <circle cx="200" cy="30" r="6" fill="var(--cyan)" opacity="0.5"/>
+          <text x="90" y="24" fill="var(--text2)" font-size="8" font-family="Share Tech Mono">BATCH MIXER M-01</text>
+        </svg>
+      </div>
+
+      <div class="scada-screen">
+        <div style="font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:600;color:var(--orange3);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:8px;">
+          <span style="width:3px;height:12px;background:var(--orange);display:inline-block;"></span>
+          PROCESS LINE
+        </div>
+        <div class="proc-indicator">
+          <div class="proc-led running"></div>
+          <div class="proc-name">Pasteurizer HTR-01</div>
+          <div class="proc-val v-orange" id="pastTemp">84.2°C</div>
+        </div>
+        <div class="proc-indicator">
+          <div class="proc-led running"></div>
+          <div class="proc-name">Homogenizer HOM-01</div>
+          <div class="proc-val v-cyan">150 bar</div>
+        </div>
+        <div class="proc-indicator">
+          <div class="proc-led warning"></div>
+          <div class="proc-name">Continuous Freezer FRZ-01</div>
+          <div class="proc-val" style="color:var(--orange3);" id="scadaFreezeTemp">-18.4°C</div>
+        </div>
+        <div class="proc-indicator">
+          <div class="proc-led running"></div>
+          <div class="proc-name">Filling Machine FM-01</div>
+          <div class="proc-val v-green" id="fillSpeed">3,200 u/h</div>
+        </div>
+        <div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text2);margin-bottom:4px;">CONVEYOR BELT — LINE 1</div>
+          <div class="conveyor">
+            <div class="conveyor-belt"></div>
+            <div class="conveyor-item"></div>
+            <div class="conveyor-item" style="animation-delay:1s;left:40%;background:rgba(200,100,200,0.7);"></div>
+            <div class="conveyor-item" style="animation-delay:2s;left:70%;background:rgba(100,200,150,0.7);"></div>
+          </div>
+        </div>
+        <div class="proc-indicator" style="margin-top:8px;">
+          <div class="proc-led running"></div>
+          <div class="proc-name">Cold Storage CS-01</div>
+          <div class="proc-val v-cyan" id="coldStorage">-24.8°C</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Center: KPIs -->
+    <div style="display:flex;flex-direction:column;gap:14px;">
+      <div class="card">
+        <div class="card-title">Production Metrics</div>
+        <div class="prod-counter" id="prodCounter">0</div>
+        <div class="prod-unit" style="text-align:center;margin-bottom:10px;">UNITS PRODUCED TODAY</div>
+        <div style="display:flex;gap:10px;">
+          <div class="pid-metric" style="flex:1;">
+            <div class="label">TARGET</div>
+            <div class="value v-orange">12,000</div>
+          </div>
+          <div class="pid-metric" style="flex:1;">
+            <div class="label">REMAINING</div>
+            <div class="value v-yellow" id="prodRemaining">12,000</div>
+          </div>
+        </div>
+        <div style="margin-top:10px;">
+          <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text2);margin-bottom:4px;">PROGRESS</div>
+          <div class="stability-bar" style="height:14px;">
+            <div class="stability-fill" id="prodProgress" style="width:0%;background:linear-gradient(90deg,var(--cyan2),var(--cyan));"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">OEE Overall Equipment Effectiveness</div>
+        <div style="display:flex;align-items:center;gap:16px;">
+          <div class="oee-circle">
+            <div class="oee-val" id="oeeDisp">78%</div>
+          </div>
+          <div style="flex:1;">
+            <div class="score-bar-row" style="margin-bottom:8px;">
+              <div class="score-bar-label" style="width:90px;font-size:9px;">Availability</div>
+              <div class="score-bar-track">
+                <div class="score-bar-fill green-f" id="oeeAvail" style="width:91%;"></div>
+              </div>
+              <div class="score-bar-val">91%</div>
+            </div>
+            <div class="score-bar-row" style="margin-bottom:8px;">
+              <div class="score-bar-label" style="width:90px;font-size:9px;">Performance</div>
+              <div class="score-bar-track">
+                <div class="score-bar-fill cyan-f" id="oeePerfEl" style="width:86%;"></div>
+              </div>
+              <div class="score-bar-val">86%</div>
+            </div>
+            <div class="score-bar-row">
+              <div class="score-bar-label" style="width:90px;font-size:9px;">Quality</div>
+              <div class="score-bar-track">
+                <div class="score-bar-fill orange-f" id="oeeQualEl" style="width:99%;"></div>
+              </div>
+              <div class="score-bar-val">99%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Compressor Status</div>
+        <div style="display:flex;align-items:center;gap:14px;">
+          <div class="compressor-ring">
+            <div class="comp-val" style="text-align:center;">
+              <div id="compHz">42.5</div>
+              <div style="font-size:8px;color:var(--text2);">Hz</div>
+            </div>
+          </div>
+          <div style="flex:1;">
+            <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text2);">RUNTIME HOURS</div>
+            <div style="font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--cyan);" id="compRuntime">2,847h</div>
+            <div style="font-size:9px;color:var(--text2);font-family:'Share Tech Mono',monospace;">Next service: 153h</div>
+            <div class="stability-bar" style="margin-top:6px;">
+              <div class="stability-fill" style="width:95%;background:linear-gradient(90deg,var(--green2),var(--yellow));"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Downtime Tracker</div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div class="pid-metric" style="flex:1;">
+            <div class="label">DOWNTIME TODAY</div>
+            <div class="value v-red" id="downtime">00:14:22</div>
+          </div>
+          <div class="pid-metric" style="flex:1;">
+            <div class="label">UPTIME %</div>
+            <div class="value v-green">98.3%</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Event log + trends -->
+    <div class="scada-right">
+      <div class="card">
+        <div class="card-title">Historical Trend</div>
+        <canvas class="hist-canvas" id="histCanvas" width="300" height="90"></canvas>
+        <div style="font-size:9px;font-family:'Share Tech Mono',monospace;color:var(--text2);margin-top:4px;display:flex;gap:10px;">
+          <span style="color:var(--cyan);">─ Freezer</span>
+          <span style="color:var(--orange);">─ Pasteur</span>
+          <span style="color:var(--green);">─ Storage</span>
+        </div>
+      </div>
+      <div class="card" style="flex:1;">
+        <div class="card-title">Event Log</div>
+        <div class="event-log" id="scadaEventLog">
+          <div class="ev ev-alarm"><span class="ts" id="ev1ts">08:14:22</span><span class="msg">ALM-001 FREEZER TEMP HIGH (+1.6°C over SP)</span></div>
+          <div class="ev ev-alarm"><span class="ts" id="ev2ts">08:12:05</span><span class="msg">ALM-002 PASTEURIZER PRESSURE LOW</span></div>
+          <div class="ev ev-ok"><span class="ts">08:10:00</span><span class="msg">LINE 1 PRODUCTION STARTED</span></div>
+          <div class="ev ev-info"><span class="ts">08:05:33</span><span class="msg">SCADA CONNECTED — OPERATOR: MARKO.N</span></div>
+          <div class="ev ev-warn"><span class="ts">07:58:10</span><span class="msg">COMPRESSOR STARTUP DELAY 8.2s (expected)</span></div>
+          <div class="ev ev-ok"><span class="ts">07:55:00</span><span class="msg">SHIFT CHANGE — DAY SHIFT ACTIVE</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== MODULE 4: EVALUATION ====== -->
+<div id="evalModule" class="module-section">
+  <div class="page-header">
+    <div>
+      <div class="page-title">Candidate <span>Evaluation</span> Dashboard</div>
+      <div class="page-sub">RECRUITER TECHNICAL SCREENING — INDUSTRIAL AUTOMATION COMPETENCY ASSESSMENT</div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <div class="eval-id">EVAL-ID: <span id="evalID">IADP-2024-001</span></div>
+      <button class="toggle-btn btn-orange" onclick="generateReport()">📋 GENERATE REPORT</button>
+      <button class="toggle-btn btn-cyan" onclick="window.print()">🖨️ PRINT PDF</button>
+    </div>
+  </div>
+
+  <!-- Print Header (visible on print) -->
+  <div class="print-header" style="margin-bottom:20px;">
+    <div style="font-size:20px;font-weight:700;">Industrial Automation Deployment Platform</div>
+    <div style="font-size:14px;color:#555;">Serbia Ice Cream Manufacturing Simulation Suite — Candidate Evaluation Report</div>
+    <div style="font-size:11px;color:#888;margin-top:4px;">Date: <span id="printDate"></span> &nbsp;|&nbsp; Evaluation ID: <span id="printEvalID"></span></div>
+  </div>
+
+  <div class="eval-header-row">
+    <!-- Candidate Info -->
+    <div class="card">
+      <div class="card-title">Candidate Information</div>
+      <div class="candidate-form">
+        <label>CANDIDATE NAME</label>
+        <input type="text" id="candName" placeholder="Enter candidate name..." oninput="updateEval()">
+        <label>POSITION APPLIED</label>
+        <select id="candPosition" onchange="updateEval()">
+          <option>PLC Systems Engineer</option>
+          <option>SCADA Developer</option>
+          <option>Automation Architect</option>
+          <option>Control Systems Engineer</option>
+          <option>Industrial IoT Engineer</option>
+          <option>MES/SCADA Integration Lead</option>
+        </select>
+        <label>ASSESSMENT DATE</label>
+        <input type="text" id="assessDate" oninput="updateEval()">
+        <label>EVALUATOR</label>
+        <input type="text" id="evaluatorName" placeholder="Evaluator name..." value="HR Assessment System" oninput="updateEval()">
+      </div>
+    </div>
+
+    <!-- Overall Readiness -->
+    <div class="card" style="text-align:center;">
+      <div class="card-title" style="justify-content:center;">Overall Deployment Readiness</div>
+      <div class="readiness-gauge" style="margin:10px auto 30px;">
+        <div class="gauge-bg"></div>
+        <div class="gauge-cover"></div>
+        <div class="gauge-needle" id="gaugeNeedle" style="transform:rotate(-90deg);"></div>
+      </div>
+      <div class="gauge-val" id="readinessVal">--</div>
+      <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text2);margin-top:8px;">DEPLOYMENT READINESS INDEX</div>
+
+      <div class="recommendation-box rec-hire" id="recBox" style="margin-top:12px;">
+        <div class="rec-label" id="recLabel" style="color:var(--green);">—</div>
+        <div class="rec-sub" id="recSub">Enter candidate scores to generate recommendation</div>
+      </div>
+
+      <!-- Risk indicator -->
+      <div class="risk-meter" style="margin-top:12px;">
+        <span style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text2);width:40px;">RISK</span>
+        <div class="risk-track">
+          <div class="risk-needle" id="riskNeedle" style="left:30%;"></div>
+        </div>
+        <span style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text2);width:40px;text-align:right;" id="riskLabel">LOW</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2" style="margin-bottom:14px;">
+    <!-- Score inputs -->
+    <div class="card">
+      <div class="card-title">Technical Score Input</div>
+      <div style="margin-bottom:6px;">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text2);margin-bottom:4px;">PID TUNING & CONTROL THEORY</div>
+        <div class="slider-row">
+          <input type="range" min="0" max="100" value="75" id="sPid" oninput="updateEval()">
+          <div class="score-bar-val" id="vPid">75</div>
+        </div>
+      </div>
+      <div style="margin-bottom:6px;">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text2);margin-bottom:4px;">TROUBLESHOOTING & FAULT DIAGNOSIS</div>
+        <div class="slider-row">
+          <input type="range" min="0" max="100" value="80" id="sTrouble" oninput="updateEval()">
+          <div class="score-bar-val" id="vTrouble">80</div>
+        </div>
+      </div>
+      <div style="margin-bottom:6px;">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text2);margin-bottom:4px;">SCADA UNDERSTANDING & HMI DESIGN</div>
+        <div class="slider-row">
+          <input type="range" min="0" max="100" value="70" id="sScada" oninput="updateEval()">
+          <div class="score-bar-val" id="vScada">70</div>
+        </div>
+      </div>
+      <div style="margin-bottom:6px;">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text2);margin-bottom:4px;">PRACTICAL SIMULATION PERFORMANCE</div>
+        <div class="slider-row">
+          <input type="range" min="0" max="100" value="82" id="sSimPerf" oninput="updateEval()">
+          <div class="score-bar-val" id="vSimPerf">82</div>
+        </div>
+      </div>
+      <div style="margin-bottom:6px;">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text2);margin-bottom:4px;">IEC 61131-3 / PROGRAMMING STANDARDS</div>
+        <div class="slider-row">
+          <input type="range" min="0" max="100" value="68" id="sIec" oninput="updateEval()">
+          <div class="score-bar-val" id="vIec">68</div>
+        </div>
+      </div>
+      <div style="margin-bottom:6px;">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text2);margin-bottom:4px;">HACCP / FOOD SAFETY AWARENESS</div>
+        <div class="slider-row">
+          <input type="range" min="0" max="100" value="60" id="sHaccp" oninput="updateEval()">
+          <div class="score-bar-val" id="vHaccp">60</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Radar chart -->
+    <div class="card">
+      <div class="card-title">Performance Radar</div>
+      <canvas id="radarChart" width="280" height="260"></canvas>
+    </div>
+  </div>
+
+  <!-- Score breakdown bars -->
+  <div class="card" style="margin-bottom:14px;">
+    <div class="card-title">Score Breakdown</div>
+    <div class="score-bar-row">
+      <div class="score-bar-label">PID Tuning</div>
+      <div class="score-bar-track"><div class="score-bar-fill cyan-f" id="bar1" style="width:75%;"></div></div>
+      <div class="score-bar-val" id="bar1v">75</div>
+    </div>
+    <div class="score-bar-row">
+      <div class="score-bar-label">Troubleshooting</div>
+      <div class="score-bar-track"><div class="score-bar-fill green-f" id="bar2" style="width:80%;"></div></div>
+      <div class="score-bar-val" id="bar2v">80</div>
+    </div>
+    <div class="score-bar-row">
+      <div class="score-bar-label">SCADA Understanding</div>
+      <div class="score-bar-track"><div class="score-bar-fill orange-f" id="bar3" style="width:70%;"></div></div>
+      <div class="score-bar-val" id="bar3v">70</div>
+    </div>
+    <div class="score-bar-row">
+      <div class="score-bar-label">Simulation Performance</div>
+      <div class="score-bar-track"><div class="score-bar-fill purple-f" id="bar4" style="width:82%;"></div></div>
+      <div class="score-bar-val" id="bar4v">82</div>
+    </div>
+    <div class="score-bar-row">
+      <div class="score-bar-label">IEC 61131-3 Standards</div>
+      <div class="score-bar-track"><div class="score-bar-fill yellow-f" id="bar5" style="width:68%;"></div></div>
+      <div class="score-bar-val" id="bar5v">68</div>
+    </div>
+    <div class="score-bar-row">
+      <div class="score-bar-label">HACCP / Food Safety</div>
+      <div class="score-bar-track"><div class="score-bar-fill cyan-f" id="bar6" style="width:60%;"></div></div>
+      <div class="score-bar-val" id="bar6v">60</div>
+    </div>
+  </div>
+
+  <!-- Strengths & Weaknesses + Comments -->
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Auto-Generated Assessment</div>
+      <div style="margin-bottom:10px;">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--green);margin-bottom:6px;">✓ STRENGTHS</div>
+        <div id="strengthsTags"></div>
+      </div>
+      <div>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--red);margin-bottom:6px;">✗ DEVELOPMENT AREAS</div>
+        <div id="weaknessTags"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Evaluator Notes</div>
+      <div class="candidate-form">
+        <label>TECHNICAL OBSERVATIONS</label>
+        <textarea id="evalNotes" style="width:100%;height:80px;background:rgba(0,0,0,0.4);border:1px solid var(--border);border-radius:4px;color:var(--text);font-family:'Exo 2',sans-serif;font-size:12px;padding:8px;outline:none;resize:vertical;" placeholder="Enter observations about candidate's technical performance..."></textarea>
+        <label>OVERALL SUMMARY</label>
+        <textarea id="evalSummary" style="width:100%;height:60px;background:rgba(0,0,0,0.4);border:1px solid var(--border);border-radius:4px;color:var(--text);font-family:'Exo 2',sans-serif;font-size:12px;padding:8px;outline:none;resize:vertical;" placeholder="Enter overall assessment summary..."></textarea>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== MODULE 5: VIRTUAL PLANT OVERVIEW ====== -->
+<div id="plantModule" class="module-section">
+  <div class="page-header">
+    <div>
+      <div class="page-title">Virtual <span>Ice Cream Plant</span> Overview</div>
+      <div class="page-sub">DIGITAL TWIN WALKTHROUGH — SERBIA MANUFACTURING FACILITY LINE 1 &amp; 2 &nbsp;|&nbsp; INTERACTIVE PRESENTATION MODE</div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+      <div class="recruiter-toggle-wrap">
+        <label class="toggle-switch" id="recModeLabel">
+          <input type="checkbox" id="recruiterModeToggle" onchange="toggleRecruiterMode()">
+          <div class="toggle-track"></div>
+          <div class="toggle-thumb"></div>
+        </label>
+        <span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--orange3);letter-spacing:1px;">☑ RECRUITER MODE</span>
+      </div>
+      <div class="view-controls">
+        <div class="vctrl-btn active-view" id="vctrl-normal" onclick="setView('normal')">NORMAL</div>
+        <div class="vctrl-btn" id="vctrl-night" onclick="setView('night')">NIGHT</div>
+        <div class="vctrl-btn" id="vctrl-maint" onclick="setView('maint')">MAINT</div>
+      </div>
+      <button class="toggle-btn btn-cyan" onclick="exportPlantSummary()">⬇ EXPORT SUMMARY</button>
+    </div>
+  </div>
+
+  <!-- Presentation Controls Bar -->
+  <div class="card" style="margin-bottom:14px;padding:12px 16px;">
+    <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+      <div class="pres-controls">
+        <button class="pres-btn play" id="vpPlayBtn" onclick="vpStartPresentation()">▶ START</button>
+        <button class="pres-btn pause" id="vpPauseBtn" onclick="vpPausePresentation()">⏸ PAUSE</button>
+        <button class="pres-btn nav" onclick="vpPrevSection()">⏮ PREV</button>
+        <button class="pres-btn nav" onclick="vpNextSection()">⏭ NEXT</button>
+        <button class="pres-btn stop" onclick="vpStopPresentation()">⏹ STOP</button>
+      </div>
+      <div style="flex:1;">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text2);margin-bottom:6px;">PRESENTATION PROGRESS</div>
+        <div class="step-dots" id="stepDots"></div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text2);">ACTIVE SECTION</div>
+        <div style="font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;color:var(--orange);" id="vpActiveSectionName">—</div>
+      </div>
+    </div>
+    <div class="flow-progress" style="margin-top:10px;">
+      <div class="flow-progress-fill" id="vpFlowProgress" style="width:0%;"></div>
+    </div>
+  </div>
+
+  <!-- Main layout: Plant map + right panels -->
+  <div style="display:grid;grid-template-columns:1fr 320px;gap:14px;align-items:start;">
+
+    <!-- Plant Canvas + Narration -->
+    <div>
+      <!-- Plant map -->
+      <div class="plant-layout-wrap" style="margin-bottom:14px;position:relative;">
+        <div class="vp-bg"></div>
+        <canvas id="plantCanvas" width="860" height="520"></canvas>
+        <div class="area-tooltip" id="areaTooltip"></div>
+      </div>
+
+      <!-- Narration box -->
+      <div id="vpNarration">
+        <div class="narration-step" id="vpNarStep">STEP 0 / 9 — READY</div>
+        <div class="narration-title" id="vpNarTitle">Virtual Plant Overview</div>
+        <div class="narration-text" id="vpNarText">Welcome to the Serbia Ice Cream Manufacturing Digital Twin. Click ▶ START to begin the guided presentation, or click any plant section on the map to explore it directly. This simulation covers all major process areas from raw material intake to cold storage dispatch.</div>
+        <div class="narration-tags" id="vpNarTags">
+          <span class="narration-tag ntag-plc">SIMATIC S7-1500</span>
+          <span class="narration-tag ntag-io">PROFINET</span>
+          <span class="narration-tag ntag-kpi">IEC 61131-3</span>
+        </div>
+      </div>
+
+      <!-- Recruiter overlay -->
+      <div class="recruiter-overlay" id="recruiterOverlay" style="margin-top:10px;">
+        <div style="font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;color:var(--orange3);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;">
+          ☑ CANDIDATE DEMONSTRATES KNOWLEDGE IN:
+        </div>
+        <div id="recruiterSkills"></div>
+        <div style="margin-top:10px;padding-top:8px;border-top:1px solid rgba(255,107,0,0.2);">
+          <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text2);margin-bottom:4px;">TECHNICAL DEPTH SCORE FOR THIS SECTION</div>
+          <div class="stability-bar" style="height:10px;">
+            <div class="stability-fill" id="recSkillBar" style="width:75%;background:linear-gradient(90deg,var(--orange),var(--orange2));"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right column: KPIs + Digital twin info -->
+    <div style="display:flex;flex-direction:column;gap:14px;">
+      <!-- KPI overlay -->
+      <div class="card">
+        <div class="card-title">Live KPI Overlay</div>
+        <div id="vpKpiPanel">
+          <div class="kpi-row">
+            <div class="k-label">SECTION STATUS</div>
+            <div class="k-val" id="kpi-status" style="color:var(--green);">RUNNING</div>
+          </div>
+          <div class="kpi-row">
+            <div class="k-label">PRIMARY TEMP</div>
+            <div class="k-val v-cyan" id="kpi-temp">—</div>
+          </div>
+          <div class="kpi-row">
+            <div class="k-label">FLOW RATE</div>
+            <div class="k-val v-orange" id="kpi-flow">—</div>
+          </div>
+          <div class="kpi-row">
+            <div class="k-label">PID OUTPUT</div>
+            <div class="k-val v-yellow" id="kpi-pid">—</div>
+          </div>
+          <div class="kpi-row">
+            <div class="k-label">ALARM STATUS</div>
+            <div class="k-val" id="kpi-alarm" style="color:var(--green);">CLEAR</div>
+          </div>
+          <div class="kpi-row">
+            <div class="k-label">BATCH NO.</div>
+            <div class="k-val" id="kpi-batch" style="color:var(--text);">—</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Digital twin info -->
+      <div class="card">
+        <div class="card-title">Digital Twin — Section Data</div>
+        <div id="vpInfoPanel">
+          <div class="info-section">
+            <div class="info-heading">🖥 PLC &amp; Control</div>
+            <div class="info-row"><span class="info-key">PLC:</span><span class="info-val" id="dt-plc">—</span></div>
+            <div class="info-row"><span class="info-key">Program:</span><span class="info-val" id="dt-prog">—</span></div>
+            <div class="info-row"><span class="info-key">Cycle:</span><span class="info-val" id="dt-cycle">—</span></div>
+          </div>
+          <div class="info-section">
+            <div class="info-heading">📡 I/O &amp; Instrumentation</div>
+            <div class="info-row"><span class="info-key">DI Count:</span><span class="info-val" id="dt-di">—</span></div>
+            <div class="info-row"><span class="info-key">DO Count:</span><span class="info-val" id="dt-do">—</span></div>
+            <div class="info-row"><span class="info-key">AI Count:</span><span class="info-val" id="dt-ai">—</span></div>
+            <div class="info-row"><span class="info-key">Sensors:</span><span class="info-val" id="dt-sensors">—</span></div>
+          </div>
+          <div class="info-section">
+            <div class="info-heading">🛡 Safety &amp; Maintenance</div>
+            <div class="info-row"><span class="info-key">Interlocks:</span><span class="info-val" id="dt-interlocks">—</span></div>
+            <div class="info-row"><span class="info-key">Maint. Int.:</span><span class="info-val" id="dt-maint">—</span></div>
+            <div class="info-row"><span class="info-key">Fail Mode:</span><span class="info-val" id="dt-fail">—</span></div>
+          </div>
+          <div>
+            <div class="info-heading">📋 Control Philosophy</div>
+            <div style="color:var(--text);font-size:10px;line-height:1.7;" id="dt-philosophy">Click a plant section to view detailed control system information.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Camera view controls -->
+      <div class="card" style="padding:12px;">
+        <div class="card-title" style="margin-bottom:8px;">Camera &amp; View Controls</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;">
+          <button class="toggle-btn btn-cyan" style="font-size:10px;padding:5px 10px;" onclick="vpZoom(1.2)">🔍 ZOOM +</button>
+          <button class="toggle-btn btn-cyan" style="font-size:10px;padding:5px 10px;" onclick="vpZoom(0.83)">🔎 ZOOM −</button>
+          <button class="toggle-btn btn-orange" style="font-size:10px;padding:5px 10px;" onclick="vpResetView()">⊙ RESET</button>
+        </div>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text2);">DRAG TO PAN &nbsp;|&nbsp; SCROLL TO ZOOM &nbsp;|&nbsp; CLICK AREAS</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end main -->
+
+<script>
+// ==========================================
+// UTILITY
+// ==========================================
+function showModule(id, el) {
+  document.querySelectorAll('.module-section').forEach(function(s){ s.classList.remove('active'); });
+  var target = document.getElementById(id);
+  if(target) target.classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(function(n){ n.classList.remove('active'); });
+  if(el) el.classList.add('active');
+  if(id === 'plantModule') {
+    setTimeout(function(){ resizeVpCanvas(); startVpAnim(); }, 60);
+  }
+}
+
+// Clock
+function updateClock() {
+  const now = new Date();
+  document.getElementById('clockPill').textContent =
+    now.toTimeString().slice(0,8);
+}
+setInterval(updateClock, 1000); updateClock();
+
+// Set eval date
+document.getElementById('assessDate').value = new Date().toLocaleDateString('en-GB');
+document.getElementById('printDate').textContent = new Date().toLocaleDateString('en-GB');
+document.getElementById('printEvalID').textContent = document.getElementById('evalID').textContent;
+
+// ==========================================
+// MODULE 1: PID SIMULATION
+// ==========================================
+const pidCanvas = document.getElementById('pidChart');
+const pidCtx = pidCanvas.getContext('2d');
+pidCanvas.width = pidCanvas.offsetWidth || 600;
+
+let pidState = {
+  pv: -18.4,
+  sp: -20.0,
+  kp: 2.0, ki: 0.5, kd: 0.8,
+  integral: 0,
+  prevError: 0,
+  output: 72.4,
+  pvHistory: [],
+  spHistory: [],
+  outHistory: [],
+  derivHistory: [],
+  mode: 'auto',
+  disturbance: 0,
+  noise: false,
+  settling: null,
+  maxOvershoot: 0,
+  baseOvershoot: 0,
+  spChanged: false,
+  faultActive: false
+};
+
+// Initialize history
+for(let i=0;i<120;i++) {
+  pidState.pvHistory.push(-20 + (Math.random()-0.5)*0.3);
+  pidState.spHistory.push(-20);
+  pidState.outHistory.push(70 + Math.random()*5);
+  pidState.derivHistory.push((Math.random()-0.5)*0.2);
+}
+
+function updatePID() {
+  const kp = parseFloat(document.getElementById('kpSlider').value);
+  const ki = parseFloat(document.getElementById('kiSlider').value);
+  const kd = parseFloat(document.getElementById('kdSlider').value);
+  const sp = parseFloat(document.getElementById('spSlider').value);
+
+  document.getElementById('kpVal').textContent = kp.toFixed(1);
+  document.getElementById('kiVal').textContent = ki.toFixed(2);
+  document.getElementById('kdVal').textContent = kd.toFixed(2);
+  document.getElementById('spSliderVal').textContent = sp.toFixed(0)+'°';
+
+  if(sp !== pidState.sp) {
+    pidState.spChanged = true;
+    pidState.sp = sp;
+    pidState.maxOvershoot = 0;
+    logPID('warn', `SP changed to ${sp}°C — observing response`);
+  }
+  pidState.kp = kp; pidState.ki = ki; pidState.kd = kd;
+}
+
+function toggleMode() {
+  pidState.mode = pidState.mode === 'auto' ? 'manual' : 'auto';
+  document.getElementById('modeLabel').textContent = pidState.mode === 'auto' ? 'AUTO MODE' : 'MANUAL MODE';
+  document.getElementById('modeLabel').className = pidState.mode === 'auto' ? 'flash-tag ft-green' : 'flash-tag ft-orange';
+  document.getElementById('modeBtn').textContent = pidState.mode === 'auto' ? '⇄ MANUAL' : '⇄ AUTO';
+  logPID('info', `Mode switched to ${pidState.mode.toUpperCase()}`);
+}
+
+let doorTimeout = null;
+function injectDoor() {
+  const btn = document.getElementById('distDoor');
+  btn.classList.toggle('active');
+  if(btn.classList.contains('active')) {
+    pidState.disturbance = 3.5;
+    logPID('warn','DISTURBANCE: Door open — thermal load +3.5°C');
+    doorTimeout = setTimeout(()=>{
+      btn.classList.remove('active');
+      pidState.disturbance = 0;
+      logPID('ok','Door closed — disturbance cleared');
+    }, 8000);
+  } else {
+    clearTimeout(doorTimeout);
+    pidState.disturbance = 0;
+  }
+}
+function injectCompressor() {
+  const btn = document.getElementById('distComp');
+  btn.classList.toggle('active');
+  if(btn.classList.contains('active')) {
+    pidState.disturbance = 5.0;
+    logPID('err','FAULT: Compressor delay — reduced cooling capacity');
+  } else {
+    pidState.disturbance = 0;
+    logPID('ok','Compressor restored — normal operation');
+  }
+}
+function injectLoad() {
+  pidState.disturbance += 2;
+  logPID('warn','LOAD SURGE: Batch added — +2°C disturbance');
+  setTimeout(()=>{ pidState.disturbance = Math.max(0, pidState.disturbance - 2); }, 5000);
+}
+function toggleNoise() {
+  pidState.noise = !pidState.noise;
+  const btn = document.getElementById('distNoise');
+  btn.classList.toggle('active');
+  btn.textContent = pidState.noise ? '〜 Noise OFF' : '〜 Noise ON';
+  logPID('info', `Process noise ${pidState.noise ? 'enabled':'disabled'}`);
+}
+
+function logPID(type, msg) {
+  const log = document.getElementById('pidEventLog');
+  const t = new Date().toTimeString().slice(0,8);
+  const div = document.createElement('div');
+  div.className = `log-entry ${type}`;
+  div.textContent = `[${t}] ${msg}`;
+  log.insertBefore(div, log.firstChild);
+  if(log.children.length > 30) log.removeChild(log.lastChild);
+}
+
+function resetPID() {
+  pidState.integral = 0;
+  pidState.prevError = 0;
+  pidState.disturbance = 0;
+  pidState.pv = -18.4;
+  pidState.pvHistory = [];
+  pidState.spHistory = [];
+  pidState.outHistory = [];
+  pidState.derivHistory = [];
+  for(let i=0;i<120;i++) {
+    pidState.pvHistory.push(-20+(Math.random()-0.5)*0.2);
+    pidState.spHistory.push(-20);
+    pidState.outHistory.push(70);
+    pidState.derivHistory.push(0);
+  }
+  logPID('ok','PID simulation reset');
+}
+
+// PID loop
+let pidTick = 0;
+function runPIDLoop() {
+  const dt = 0.05;
+  const sp = pidState.sp;
+  let pv = pidState.pv;
+  const dist = pidState.disturbance;
+  const noise = pidState.noise ? (Math.random()-0.5)*0.3 : 0;
+
+  let output = pidState.output;
+
+  if(pidState.mode === 'auto') {
+    const error = sp - pv;
+    pidState.integral += error * dt;
+    pidState.integral = Math.max(-100, Math.min(100, pidState.integral));
+    const derivative = (error - pidState.prevError) / dt;
+    pidState.prevError = error;
+    output = pidState.kp * error + pidState.ki * pidState.integral + pidState.kd * derivative;
+    output = Math.max(0, Math.min(100, output));
+    pidState.output = output;
+
+    // Process model: 1st order + dist
+    const tau = 15;
+    const K = 0.4;
+    const dpv = (K * output - (pv - sp + dist) - pv/tau) * dt * 0.3;
+    pv = pv + dpv + (Math.random()-0.5)*0.02 + noise;
+    pv = Math.max(-35, Math.min(-5, pv));
+    pidState.pv = pv;
+
+    // Track overshoot
+    if(pv > sp + 0.1) pidState.maxOvershoot = Math.max(pidState.maxOvershoot, Math.abs(pv - sp));
+
+    // Stability
+    const errAbs = Math.abs(error);
+    const stabPct = Math.max(0, Math.min(100, 100 - errAbs*20 - Math.abs(derivative)*5));
+    document.getElementById('stabilityFill').style.width = stabPct + '%';
+    document.getElementById('stabilityFill').style.background =
+      stabPct > 70 ? 'linear-gradient(90deg,var(--green2),var(--green))' :
+      stabPct > 40 ? 'linear-gradient(90deg,var(--yellow),var(--orange))' :
+      'linear-gradient(90deg,var(--orange),var(--red))';
+    document.getElementById('stabilityLabel').textContent =
+      stabPct > 70 ? 'STABLE' : stabPct > 40 ? 'OSCILLATING' : 'UNSTABLE';
+    document.getElementById('stabilityLabel').style.color =
+      stabPct > 70 ? 'var(--green)' : stabPct > 40 ? 'var(--yellow)' : 'var(--red)';
+
+    document.getElementById('integralDisplay').textContent = pidState.integral.toFixed(2);
+    document.getElementById('derivDisplay').textContent = derivative.toFixed(2);
+
+    // Settling time
+    if(pidTick % 100 === 0) {
+      if(errAbs < 0.2) {
+        document.getElementById('settlingTime').textContent = (pidTick*0.05).toFixed(0)+'s';
+        if(pidState.spChanged) logPID('ok',`Settled at ${pv.toFixed(1)}°C`);
+        pidState.spChanged = false;
+      }
+      document.getElementById('overshootVal').textContent = pidState.maxOvershoot.toFixed(2)+'°C';
+    }
+
+    // Update displays
+    document.getElementById('pvDisplay').textContent = pv.toFixed(1);
+    document.getElementById('spDisplay').textContent = sp.toFixed(1);
+    document.getElementById('errDisplay').textContent = (pv-sp).toFixed(2);
+    document.getElementById('outDisplay').textContent = output.toFixed(1);
+
+    // Sidebar
+    document.getElementById('sidebarFreeze').textContent = pv.toFixed(1)+'°C';
+    document.getElementById('scadaFreezeTemp').textContent = pv.toFixed(1)+'°C';
+
+    // History
+    pidState.pvHistory.push(pv);
+    pidState.spHistory.push(sp);
+    pidState.outHistory.push(output);
+    pidState.derivHistory.push(derivative);
+    if(pidState.pvHistory.length > 200) {
+      pidState.pvHistory.shift();
+      pidState.spHistory.shift();
+      pidState.outHistory.shift();
+      pidState.derivHistory.shift();
+    }
+  }
+  pidTick++;
+  drawPIDChart();
+}
+
+function drawPIDChart() {
+  const c = pidCanvas;
+  const ctx = pidCtx;
+  const w = c.width, h = c.height;
+  ctx.clearRect(0,0,w,h);
+
+  // Background
+  ctx.fillStyle = 'rgba(0,0,0,0.5)';
+  ctx.fillRect(0,0,w,h);
+
+  // Grid
+  ctx.strokeStyle = 'rgba(0,180,255,0.08)';
+  ctx.lineWidth = 1;
+  for(let i=0;i<=10;i++) {
+    const y = (i/10)*h;
+    ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(w,y); ctx.stroke();
+  }
+  for(let i=0;i<=20;i++) {
+    const x = (i/20)*w;
+    ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,h); ctx.stroke();
+  }
+
+  const data = pidState.pvHistory;
+  const spD = pidState.spHistory;
+  const outD = pidState.outHistory;
+  const drvD = pidState.derivHistory;
+  const n = data.length;
+  if(n < 2) return;
+
+  // Temp range: -35 to -5
+  function tempY(v) { return h - ((v+35)/30)*h*0.8 - h*0.05; }
+  function outY(v) { return h - (v/100)*h*0.6 - h*0.05; }
+  function drvY(v) { return h*0.5 - v*3; }
+
+  // SP line (dashed orange)
+  ctx.beginPath();
+  ctx.strokeStyle = 'rgba(255,107,0,0.7)';
+  ctx.lineWidth = 1.5;
+  ctx.setLineDash([6,4]);
+  for(let i=0;i<n;i++) {
+    const x = (i/(n-1))*w;
+    const y = tempY(spD[i]);
+    i===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+  }
+  ctx.stroke(); ctx.setLineDash([]);
+
+  // Derivative (purple, thin)
+  ctx.beginPath();
+  ctx.strokeStyle = 'rgba(136,68,255,0.5)';
+  ctx.lineWidth = 1;
+  for(let i=0;i<n;i++) {
+    const x = (i/(n-1))*w;
+    const y = drvY(drvD[i]);
+    i===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+
+  // Output (yellow)
+  ctx.beginPath();
+  ctx.strokeStyle = 'rgba(255,221,0,0.6)';
+  ctx.lineWidth = 1.5;
+  for(let i=0;i<n;i++) {
+    const x = (i/(n-1))*w;
+    const y = outY(outD[i]);
+    i===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+
+  // PV (cyan, main)
+  const grad = ctx.createLinearGradient(0,0,0,h);
+  grad.addColorStop(0,'rgba(0,212,255,0.8)');
+  grad.addColorStop(1,'rgba(0,100,200,0.8)');
+  ctx.beginPath();
+  ctx.strokeStyle = grad;
+  ctx.lineWidth = 2;
+  for(let i=0;i<n;i++) {
+    const x = (i/(n-1))*w;
+    const y = tempY(data[i]);
+    i===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+
+  // Last point dot
+  const lastX = w;
+  const lastY = tempY(data[n-1]);
+  ctx.beginPath();
+  ctx.arc(lastX-2, lastY, 4, 0, Math.PI*2);
+  ctx.fillStyle = 'var(--cyan)';
+  ctx.fill();
+
+  // Axis labels
+  ctx.fillStyle = 'rgba(122,154,181,0.7)';
+  ctx.font = '9px Share Tech Mono';
+  ctx.fillText('-35°C', 4, h-4);
+  ctx.fillText('-20°C', 4, tempY(-20));
+  ctx.fillText('-5°C', 4, h*0.07);
+}
+
+setInterval(runPIDLoop, 50);
+
+// ==========================================
+// MODULE 2: 3D CABINET
+// ==========================================
+let cabinetDoorOpen = false;
+function toggleCabinetDoor() {
+  cabinetDoorOpen = !cabinetDoorOpen;
+  document.getElementById('cabinet3d').classList.toggle('door-open', cabinetDoorOpen);
+  logPID('info', cabinetDoorOpen ? 'Cabinet door opened' : 'Cabinet door closed');
+}
+
+let cabinetFault = false;
+function injectCabinetFault() {
+  cabinetFault = true;
+  document.getElementById('diModule').classList.add('fault-highlight');
+  document.getElementById('errLed').className = 'led r';
+  document.getElementById('faultStatus').innerHTML = `
+    <div class="proc-led warning"></div>
+    <div class="proc-name">Fault Register</div>
+    <div class="proc-val v-red" style="font-size:12px;">F0234</div>`;
+  document.getElementById('sidebarHealth').textContent = 'FAULT';
+  document.getElementById('sidebarHealth').style.color = 'var(--red)';
+  logPID('err','Cabinet fault injected: DI Module F0234');
+}
+function clearFaults() {
+  cabinetFault = false;
+  document.getElementById('diModule').classList.remove('fault-highlight');
+  document.getElementById('errLed').className = 'led off';
+  document.getElementById('faultStatus').innerHTML = `
+    <div class="proc-led stopped" style="animation:none;"></div>
+    <div class="proc-name">Fault Register</div>
+    <div class="proc-val v-green" style="font-size:12px;">CLEAR</div>`;
+  document.getElementById('sidebarHealth').textContent = 'NOMINAL';
+  document.getElementById('sidebarHealth').style.color = 'var(--green)';
+  logPID('ok','All cabinet faults cleared');
+}
+
+// Cabinet LEDs init
+document.getElementById('pwrLed').className = 'led' + ' ';
+document.getElementById('pwrLed').style.background = 'var(--green)';
+document.getElementById('pwrLed').style.boxShadow = '0 0 6px var(--green)';
+document.getElementById('runLed').className = 'led g';
+document.getElementById('errLed').className = 'led off';
+document.getElementById('comLed').className = 'led c';
+
+// Cabinet temp simulation
+let cabTempVal = 34.2;
+setInterval(()=>{
+  cabTempVal += (Math.random()-0.5)*0.2;
+  cabTempVal = Math.max(30, Math.min(45, cabTempVal));
+  document.getElementById('cabinetTemp').textContent = cabTempVal.toFixed(1)+'°C';
+  document.getElementById('cabTempDisp').textContent = cabTempVal.toFixed(1)+'°C';
+}, 2000);
+
+// Tooltip
+function showDiag(e, html) {
+  const t = document.getElementById('diagTooltip');
+  t.innerHTML = html;
+  t.style.display = 'block';
+  t.style.left = (e.clientX+15)+'px';
+  t.style.top = (e.clientY+15)+'px';
+}
+function hideDiag() {
+  document.getElementById('diagTooltip').style.display = 'none';
+}
+document.addEventListener('mousemove', e => {
+  const t = document.getElementById('diagTooltip');
+  if(t.style.display==='block') {
+    t.style.left = (e.clientX+15)+'px';
+    t.style.top = (e.clientY+15)+'px';
+  }
+});
+
+// ==========================================
+// MODULE 3: SCADA
+// ==========================================
+let scadaState = {
+  production: 0,
+  target: 12000,
+  alarms: 2,
+  downSeconds: 862,
+  running: true,
+  pastTemp: 84.2,
+  fillSpeed: 3200,
+  coldStorage: -24.8,
+  compHz: 42.5,
+  oee: 78,
+  milkPct: 72, creamPct: 55, sugarPct: 88, flavorPct: 41,
+  eventLog: [],
+  histFreeze: [], histPast: [], histStorage: []
+};
+
+// Init hist
+for(let i=0;i<60;i++) {
+  scadaState.histFreeze.push(-20 + Math.sin(i*0.2)*0.5 + (Math.random()-0.5)*0.3);
+  scadaState.histPast.push(84 + Math.sin(i*0.1)*1 + (Math.random()-0.5)*0.5);
+  scadaState.histStorage.push(-25 + (Math.random()-0.5)*0.2);
+}
+
+function ackAlarms() {
+  scadaState.alarms = 0;
+  document.getElementById('alarmCount').textContent = '0';
+  document.getElementById('topAlarmCount').textContent = '0';
+  document.getElementById('alarmBanner').style.opacity = '0.4';
+  document.getElementById('alarmBanner').style.animation = 'none';
+  document.getElementById('alarmFlash').style.display = 'none';
+  addScadaEvent('ok','All alarms acknowledged by operator');
+}
+
+function addScadaEvent(type, msg) {
+  const log = document.getElementById('scadaEventLog');
+  const t = new Date().toTimeString().slice(0,8);
+  const div = document.createElement('div');
+  div.className = `ev ev-${type}`;
+  div.innerHTML = `<span class="ts">${t}</span><span class="msg">${msg}</span>`;
+  log.insertBefore(div, log.firstChild);
+  if(log.children.length > 20) log.removeChild(log.lastChild);
+}
+
+function injectScadaEvent() {
+  const events = [
+    ['warn','HOM-01 pressure fluctuation: 148 bar'],
+    ['info','BATCH MIX-001 completed — 500L'],
+    ['ok','Cold storage temperature stabilised'],
+    ['alarm','TEMP SENSOR T-04 deviation > 1.5°C'],
+    ['info','VFD speed reference adjusted: 45Hz'],
+    ['warn','Filling machine jam cleared — resume'],
+  ];
+  const ev = events[Math.floor(Math.random()*events.length)];
+  addScadaEvent(ev[0], ev[1]);
+}
+
+// SCADA loop
+setInterval(()=>{
+  if(!scadaState.running) return;
+  // Production
+  scadaState.production = Math.min(scadaState.target, scadaState.production + Math.floor(Math.random()*4+1));
+  const prod = scadaState.production;
+  document.getElementById('prodCounter').textContent = prod.toLocaleString();
+  document.getElementById('prodRemaining').textContent = (scadaState.target - prod).toLocaleString();
+  document.getElementById('prodProgress').style.width = ((prod/scadaState.target)*100)+'%';
+  document.getElementById('sidebarProd').textContent = prod.toLocaleString();
+
+  // Downtime
+  scadaState.downSeconds++;
+  const ds = scadaState.downSeconds;
+  const h = Math.floor(ds/3600).toString().padStart(2,'0');
+  const m = Math.floor((ds%3600)/60).toString().padStart(2,'0');
+  const s = (ds%60).toString().padStart(2,'0');
+  document.getElementById('downtime').textContent = `${h}:${m}:${s}`;
+
+  // Tank drift
+  scadaState.milkPct = Math.max(10, scadaState.milkPct - 0.02 + Math.random()*0.01);
+  scadaState.creamPct = Math.max(10, scadaState.creamPct - 0.015 + Math.random()*0.01);
+  scadaState.sugarPct = Math.max(10, scadaState.sugarPct - 0.01);
+  scadaState.flavorPct = Math.max(5, scadaState.flavorPct - 0.005);
+
+  ['Milk','Cream','Sugar','Flavor'].forEach((t,i) => {
+    const id = 'tank'+t;
+    const pct = [scadaState.milkPct,scadaState.creamPct,scadaState.sugarPct,scadaState.flavorPct][i];
+    const el = document.getElementById(id);
+    if(el) el.style.height = pct+'%';
+    const pctEl = document.getElementById(id+'Pct');
+    if(pctEl) pctEl.textContent = Math.round(pct)+'%';
+  });
+
+  // Pasteurizer
+  scadaState.pastTemp += (Math.random()-0.5)*0.3;
+  scadaState.pastTemp = Math.max(82, Math.min(87, scadaState.pastTemp));
+  document.getElementById('pastTemp').textContent = scadaState.pastTemp.toFixed(1)+'°C';
+
+  // Fill speed
+  scadaState.fillSpeed += Math.floor((Math.random()-0.5)*20);
+  scadaState.fillSpeed = Math.max(3000, Math.min(3500, scadaState.fillSpeed));
+  document.getElementById('fillSpeed').textContent = scadaState.fillSpeed.toLocaleString()+' u/h';
+
+  // Cold storage
+  scadaState.coldStorage += (Math.random()-0.5)*0.05;
+  document.getElementById('coldStorage').textContent = scadaState.coldStorage.toFixed(1)+'°C';
+
+  // OEE
+  scadaState.oee = Math.min(100, Math.max(60, scadaState.oee + (Math.random()-0.5)*0.1));
+  document.getElementById('oeeDisp').textContent = Math.round(scadaState.oee)+'%';
+  document.getElementById('sidebarOEE').textContent = scadaState.oee.toFixed(1)+'%';
+
+  // Compressor
+  scadaState.compHz += (Math.random()-0.5)*0.3;
+  scadaState.compHz = Math.max(38, Math.min(50, scadaState.compHz));
+  document.getElementById('compHz').textContent = scadaState.compHz.toFixed(1);
+
+  // History
+  scadaState.histFreeze.push(pidState.pv);
+  scadaState.histPast.push(scadaState.pastTemp);
+  scadaState.histStorage.push(scadaState.coldStorage);
+  if(scadaState.histFreeze.length > 60) {
+    scadaState.histFreeze.shift();
+    scadaState.histPast.shift();
+    scadaState.histStorage.shift();
+  }
+  drawHistChart();
+
+  // Random event
+  if(Math.random() < 0.02) injectScadaEvent();
+
+}, 1000);
+
+function drawHistChart() {
+  const c = document.getElementById('histCanvas');
+  if(!c) return;
+  const ctx = c.getContext('2d');
+  c.width = c.offsetWidth || 300;
+  const w = c.width, h = c.height;
+  ctx.clearRect(0,0,w,h);
+  ctx.fillStyle = 'rgba(0,0,0,0.5)';
+  ctx.fillRect(0,0,w,h);
+
+  // Grid
+  ctx.strokeStyle = 'rgba(0,180,255,0.06)';
+  ctx.lineWidth = 1;
+  for(let i=0;i<=4;i++) { ctx.beginPath(); ctx.moveTo(0,(i/4)*h); ctx.lineTo(w,(i/4)*h); ctx.stroke(); }
+
+  function drawLine(data, color, minV, maxV) {
+    const n = data.length;
+    if(n<2) return;
+    ctx.beginPath();
+    ctx.strokeStyle = color; ctx.lineWidth = 1.5;
+    for(let i=0;i<n;i++) {
+      const x = (i/(n-1))*w;
+      const y = h - ((data[i]-minV)/(maxV-minV))*(h*0.85) - h*0.05;
+      i===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+  }
+  drawLine(scadaState.histFreeze, 'rgba(0,212,255,0.8)', -35, -5);
+  drawLine(scadaState.histPast, 'rgba(255,107,0,0.7)', 70, 100);
+  drawLine(scadaState.histStorage, 'rgba(0,255,136,0.7)', -35, -5);
+}
+
+// ==========================================
+// MODULE 4: EVALUATION
+// ==========================================
+let radarAnimFrame;
+let evalScores = { pid:75, trouble:80, scada:70, simperf:82, iec:68, haccp:60 };
+
+function updateEval() {
+  evalScores.pid = parseInt(document.getElementById('sPid').value);
+  evalScores.trouble = parseInt(document.getElementById('sTrouble').value);
+  evalScores.scada = parseInt(document.getElementById('sScada').value);
+  evalScores.simperf = parseInt(document.getElementById('sSimPerf').value);
+  evalScores.iec = parseInt(document.getElementById('sIec').value);
+  evalScores.haccp = parseInt(document.getElementById('sHaccp').value);
+
+  // Update score displays
+  document.getElementById('vPid').textContent = evalScores.pid;
+  document.getElementById('vTrouble').textContent = evalScores.trouble;
+  document.getElementById('vScada').textContent = evalScores.scada;
+  document.getElementById('vSimPerf').textContent = evalScores.simperf;
+  document.getElementById('vIec').textContent = evalScores.iec;
+  document.getElementById('vHaccp').textContent = evalScores.haccp;
+
+  // Update bars
+  const scores = [evalScores.pid, evalScores.trouble, evalScores.scada, evalScores.simperf, evalScores.iec, evalScores.haccp];
+  for(let i=1;i<=6;i++) {
+    document.getElementById('bar'+i).style.width = scores[i-1]+'%';
+    document.getElementById('bar'+i+'v').textContent = scores[i-1];
+  }
+
+  // Overall
+  const avg = scores.reduce((a,b)=>a+b,0)/scores.length;
+  const readPct = Math.round(avg);
+  document.getElementById('readinessVal').textContent = readPct+'%';
+
+  // Gauge needle: -90deg (0%) to +90deg (100%)
+  const deg = -90 + (readPct/100)*180;
+  document.getElementById('gaugeNeedle').style.transform = `rotate(${deg}deg)`;
+
+  // Recommendation
+  const recBox = document.getElementById('recBox');
+  const recLabel = document.getElementById('recLabel');
+  const recSub = document.getElementById('recSub');
+  recBox.className = 'recommendation-box';
+  if(readPct >= 80) {
+    recBox.classList.add('rec-hire');
+    recLabel.textContent = '✓ HIRE';
+    recLabel.style.color = 'var(--green)';
+    recSub.textContent = 'Candidate meets all requirements. Recommended for immediate deployment.';
+  } else if(readPct >= 65) {
+    recBox.classList.add('rec-consider');
+    recLabel.textContent = '◎ CONSIDER';
+    recLabel.style.color = 'var(--yellow)';
+    recSub.textContent = 'Candidate shows potential. Consider with supplemental onboarding.';
+  } else if(readPct >= 50) {
+    recBox.classList.add('rec-train');
+    recLabel.textContent = '⟳ NEEDS TRAINING';
+    recLabel.style.color = 'var(--orange)';
+    recSub.textContent = 'Candidate requires targeted training before deployment.';
+  } else {
+    recBox.classList.add('rec-reject');
+    recLabel.textContent = '✗ REJECT';
+    recLabel.style.color = 'var(--red)';
+    recSub.textContent = 'Candidate does not meet minimum technical requirements.';
+  }
+
+  // Risk needle
+  const riskPct = 100 - readPct;
+  document.getElementById('riskNeedle').style.left = riskPct+'%';
+  document.getElementById('riskLabel').textContent = riskPct < 25 ? 'LOW' : riskPct < 50 ? 'MEDIUM' : riskPct < 75 ? 'HIGH' : 'CRITICAL';
+
+  // Strengths / Weaknesses
+  const allLabels = ['PID Tuning','Troubleshooting','SCADA','Sim Performance','IEC Standards','HACCP'];
+  const strengthsEl = document.getElementById('strengthsTags');
+  const weaknessEl = document.getElementById('weaknessTags');
+  strengthsEl.innerHTML = '';
+  weaknessEl.innerHTML = '';
+  scores.forEach((s, i) => {
+    const tag = document.createElement('span');
+    tag.className = 'sw-tag ' + (s >= 70 ? 'strong' : 'weak');
+    tag.textContent = allLabels[i] + ': ' + s;
+    if(s >= 70) strengthsEl.appendChild(tag);
+    else weaknessEl.appendChild(tag);
+  });
+
+  drawRadar();
+}
+
+function drawRadar() {
+  const c = document.getElementById('radarChart');
+  if(!c) return;
+  const ctx = c.getContext('2d');
+  const w = c.width, h = c.height;
+  ctx.clearRect(0,0,w,h);
+
+  const cx = w/2, cy = h/2, r = Math.min(w,h)/2 - 30;
+  const labels = ['PID Tuning','Troubleshoot','SCADA','Sim Perf','IEC 61131','HACCP'];
+  const vals = [evalScores.pid,evalScores.trouble,evalScores.scada,evalScores.simperf,evalScores.iec,evalScores.haccp];
+  const n = labels.length;
+
+  // Background rings
+  for(let ring=1;ring<=5;ring++) {
+    ctx.beginPath();
+    for(let i=0;i<n;i++) {
+      const angle = (i/n)*Math.PI*2 - Math.PI/2;
+      const rr = r*(ring/5);
+      const x = cx + Math.cos(angle)*rr;
+      const y = cy + Math.sin(angle)*rr;
+      i===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+    }
+    ctx.closePath();
+    ctx.strokeStyle = 'rgba(0,180,255,0.1)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    ctx.fillStyle = ring%2===0 ? 'rgba(0,100,200,0.03)' : 'transparent';
+    ctx.fill();
+  }
+
+  // Spokes
+  for(let i=0;i<n;i++) {
+    const angle = (i/n)*Math.PI*2 - Math.PI/2;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + Math.cos(angle)*r, cy + Math.sin(angle)*r);
+    ctx.strokeStyle = 'rgba(0,180,255,0.15)';
+    ctx.lineWidth = 1; ctx.stroke();
+  }
+
+  // Data polygon (fill)
+  ctx.beginPath();
+  for(let i=0;i<n;i++) {
+    const angle = (i/n)*Math.PI*2 - Math.PI/2;
+    const rr = r*(vals[i]/100);
+    const x = cx + Math.cos(angle)*rr;
+    const y = cy + Math.sin(angle)*rr;
+    i===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+  }
+  ctx.closePath();
+  ctx.fillStyle = 'rgba(255,107,0,0.15)';
+  ctx.fill();
+  ctx.strokeStyle = 'var(--orange)';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // Data points
+  for(let i=0;i<n;i++) {
+    const angle = (i/n)*Math.PI*2 - Math.PI/2;
+    const rr = r*(vals[i]/100);
+    const x = cx + Math.cos(angle)*rr;
+    const y = cy + Math.sin(angle)*rr;
+    ctx.beginPath();
+    ctx.arc(x,y,4,0,Math.PI*2);
+    ctx.fillStyle = vals[i]>=70?'var(--green)':'var(--red)';
+    ctx.fill();
+  }
+
+  // Labels
+  ctx.font = 'bold 9px Exo 2, sans-serif';
+  ctx.textAlign = 'center';
+  for(let i=0;i<n;i++) {
+    const angle = (i/n)*Math.PI*2 - Math.PI/2;
+    const rr = r + 18;
+    const x = cx + Math.cos(angle)*rr;
+    const y = cy + Math.sin(angle)*rr;
+    ctx.fillStyle = vals[i]>=70 ? 'rgba(0,255,136,0.9)' : 'rgba(255,100,100,0.9)';
+    ctx.fillText(labels[i], x, y+3);
+    // Score
+    ctx.fillStyle = 'rgba(255,255,255,0.6)';
+    ctx.fillText(vals[i], x, y+13);
+  }
+}
+
+// Init eval
+updateEval();
+setInterval(drawRadar, 3000);
+
+function generateReport() {
+  const name = document.getElementById('candName').value || 'N/A';
+  const pos = document.getElementById('candPosition').value;
+  const date = document.getElementById('assessDate').value;
+  const avg = Math.round((evalScores.pid+evalScores.trouble+evalScores.scada+evalScores.simperf+evalScores.iec+evalScores.haccp)/6);
+  alert(`EVALUATION REPORT GENERATED\n\nCandidate: ${name}\nPosition: ${pos}\nDate: ${date}\nOverall Score: ${avg}%\nEval ID: ${document.getElementById('evalID').textContent}\n\nUse PRINT PDF button to export formatted report.`);
+}
+
+// ==========================================
+// GLOBAL RESET
+// ==========================================
+function resetAll() {
+  resetPID();
+  scadaState.production = 0;
+  scadaState.alarms = 2;
+  document.getElementById('alarmCount').textContent = '2';
+  document.getElementById('topAlarmCount').textContent = '2';
+  document.getElementById('alarmBanner').style.opacity = '1';
+  document.getElementById('alarmBanner').style.animation = 'alarmPulse 2s ease-in-out infinite';
+  document.getElementById('alarmFlash').style.display = 'inline-block';
+  clearFaults();
+  if(cabinetDoorOpen) toggleCabinetDoor();
+  logPID('ok','Full system reset performed');
+}
+
+// Unique eval ID
+function genEvalID() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let id = 'IADP-' + new Date().getFullYear() + '-';
+  for(let i=0;i<6;i++) id += chars[Math.floor(Math.random()*chars.length)];
+  document.getElementById('evalID').textContent = id;
+  document.getElementById('printEvalID').textContent = id;
+}
+genEvalID();
+
+// Resize canvas on window resize
+window.addEventListener('resize', function(){
+  var c = document.getElementById('pidChart');
+  if(c) c.width = c.offsetWidth || 600;
+  var h = document.getElementById('histCanvas');
+  if(h) h.width = h.offsetWidth || 300;
+  var pm = document.getElementById('plantModule');
+  if(pm && pm.classList.contains('active')) resizeVpCanvas();
+});
+setTimeout(function(){
+  var c = document.getElementById('pidChart');
+  if(c) c.width = c.offsetWidth || 600;
+}, 100);
+
+// Timestamp events
+function now8() { return new Date().toTimeString().slice(0,8); }
+
+// Initial log entries
+logPID('ok','PID simulation initialized — Auto mode active');
+logPID('info','Freezer temperature loop FB_PID running');
+logPID('info','IEC 61131-3 compliant function block loaded');
+
+// ==========================================
+// MODULE 5: VIRTUAL PLANT OVERVIEW
+// ==========================================
+
+// Plant sections definition
+const plantSections = [
+  {
+    id:'rawmat', label:'Raw Material\nArea', abbr:'RM',
+    x:20, y:20, w:130, h:90, color:'#1a4a2a', borderColor:'#00cc66',
+    status:'running', icon:'🥛',
+    kpi:{ status:'RUNNING', temp:'4.2°C', flow:'850 L/h', pid:'AUTO', alarm:'CLEAR', batch:'RM-2024-041' },
+    dt:{ plc:'CPU 1511-1 PN', prog:'FB_RawMaterial', cycle:'3.1ms', di:'12', do:'8', ai:'6', sensors:'PT100 ×4, LT ×3, FT ×2', interlocks:'Level Lo-Lo, Temp Hi', maint:'Every 500h', fail:'Fail-safe close valves', philosophy:'Automated level control via FB_TankControl. Milk and cream tanks maintained at 2–6°C. FIFO batch tracking with barcode scanner integration.' },
+    narr:{ step:'STEP 1/9', title:'Raw Material Intake & Storage', text:'The raw material area receives and stores dairy ingredients — whole milk, cream, skim milk powder, and sugar. Automated level transmitters (LT) and temperature sensors (PT100) feed directly into the PLC. Cold chain integrity is monitored 24/7 with alarm limits set per HACCP critical control points.', tags:['LT-101','PT-102','FB_TankControl','HACCP CCP-1'], plcTags:['LT-101 Level','PT-102 Temp','FT-103 Flow'], recSkills:['Tank level PID control','Sensor calibration (4-20mA)','HACCP cold chain monitoring','Batch tracking logic'], recScore:80 }
+  },
+  {
+    id:'mixing', label:'Mixing &\nHomogenizer', abbr:'MX',
+    x:170, y:20, w:130, h:90, color:'#1a2a4a', borderColor:'#00a8cc',
+    status:'running', icon:'🔄',
+    kpi:{ status:'RUNNING', temp:'8.5°C', flow:'700 L/h', pid:'84%', alarm:'CLEAR', batch:'MX-2024-041' },
+    dt:{ plc:'CPU 1515F-2 PN', prog:'FB_BatchMixer', cycle:'2.4ms', di:'16', do:'14', ai:'8', sensors:'PT100 ×2, FT ×3, PIC ×1, Speed ×2', interlocks:'Agitator OL, Level Lo', maint:'Every 250h (seals)', fail:'Stop agitator, hold batch', philosophy:'Recipe-controlled mixing via SIMATIC BATCH server. Ingredient dosing through mass flow meters (Coriolis). Homogenizer PID maintains 150 bar operating pressure.' },
+    narr:{ step:'STEP 2/9', title:'Mixing & Homogenization', text:'Ingredients are accurately dosed using Coriolis mass flow meters and blended in the batch mixer. The homogenizer reduces fat globule size to below 1 micron at 150 bar — critical for smooth texture. All parameters are managed via SIMATIC BATCH with full recipe management and electronic batch records.', tags:['FT-201','PIC-202','FB_BatchMixer','BATCH Server'], plcTags:['FT-201 Flow','PIC-202 Pressure','SPD-203 Speed'], recSkills:['SIMATIC BATCH programming','Coriolis flow meter integration','High-pressure control loops','Recipe management systems'], recScore:88 }
+  },
+  {
+    id:'pasteur', label:'Pasteurization', abbr:'PS',
+    x:320, y:20, w:130, h:90, color:'#4a1a0a', borderColor:'#ff6b00',
+    status:'running', icon:'🌡',
+    kpi:{ status:'RUNNING', temp:'85.2°C', flow:'650 L/h', pid:'78%', alarm:'WARNING', batch:'PS-2024-041' },
+    dt:{ plc:'CPU 1515F-2 PN', prog:'FB_Pasteurizer', cycle:'2.4ms', di:'10', do:'10', ai:'8', sensors:'PT100 ×4, FIC ×2, PR ×1', interlocks:'Temp Lo → Divert Valve, Flow Lo → Stop', maint:'Every 100h (plates)', fail:'Divert to reject, alarm', philosophy:'HTST pasteurization at 85°C for 30 seconds. Dual-loop PID cascade: outer loop temperature, inner loop steam flow. Automatic divert valve activates if temperature drops below CCP limit.' },
+    narr:{ step:'STEP 3/9', title:'Pasteurization — HTST Process', text:'High-Temperature Short-Time (HTST) pasteurization heats the mix to 85°C for a minimum 30-second holding period. A cascade PID loop controls steam flow to maintain precise temperature. This is HACCP Critical Control Point 2 — any deviation triggers an automatic divert valve that redirects non-conforming product back for reprocessing.', tags:['TIC-301','FIC-302','FCV-303','HACCP CCP-2'], plcTags:['TIC-301 Temp','FIC-302 Steam','FCV-303 Divert'], recSkills:['Cascade PID implementation','CCP temperature control','HTST process logic','Divert valve safety interlock'], recScore:92 }
+  },
+  {
+    id:'aging', label:'Aging\nTanks', abbr:'AG',
+    x:470, y:20, w:110, h:90, color:'#1a1a4a', borderColor:'#8844ff',
+    status:'running', icon:'⏱',
+    kpi:{ status:'RUNNING', temp:'4.0°C', flow:'—', pid:'65%', alarm:'CLEAR', batch:'AG-2024-039' },
+    dt:{ plc:'CPU 1511-1 PN', prog:'FB_AgingControl', cycle:'5ms', di:'8', do:'6', ai:'4', sensors:'PT100 ×2, LT ×2, Timer', interlocks:'Temp Hi, Door Closed', maint:'Every 1000h', fail:'Hold batch, temp alarm', philosophy:'Mix is aged at 4°C for 4–24 hours to hydrate stabilisers and improve overrun. Timer-based batch control with automatic sequencing. Temperature maintained by chilled water circuit.' },
+    narr:{ step:'STEP 4/9', title:'Aging Tank Maturation', text:'The pasteurized mix is cooled to 4°C and aged for 4 to 24 hours in insulated jacketed tanks. This hydrates the stabilizers and emulsifiers, improving the final product texture and overrun. A timer-based PLC sequence manages batch hold times and automates the transfer to the freezing section.', tags:['LT-401','TIC-402','Timer-FB','Chilled Water'], plcTags:['TIC-402 Temp','LT-401 Level','TMR-403 Age Timer'], recSkills:['Timer-based sequence control','Chilled water control loops','Batch sequencing logic','Aging parameter optimization'], recScore:75 }
+  },
+  {
+    id:'freezer', label:'Continuous\nFreezer', abbr:'FZ',
+    x:600, y:20, w:130, h:90, color:'#002a3a', borderColor:'#00d4ff',
+    status:'warning', icon:'❄',
+    kpi:{ status:'WARNING', temp:'-18.4°C', flow:'500 L/h', pid:'72%', alarm:'TEMP HIGH', batch:'FZ-2024-041' },
+    dt:{ plc:'CPU 1515F-2 PN', prog:'FB_ContinuousFreezer', cycle:'2.4ms', di:'14', do:'12', ai:'10', sensors:'PT100 ×4, PIC ×2, Speed ×1, LT ×1', interlocks:'Temp Hi →Alarm, Overrun Hi, Compressor Fault', maint:'Every 200h (blades)', fail:'Stop product pump, hold temp', philosophy:'Continuous freezer reduces mix temperature to −5°C while incorporating air (overrun 80–120%). PID controls refrigerant injection via expansion valve. Dasher speed controls overrun percentage.' },
+    narr:{ step:'STEP 5/9', title:'Continuous Freezing — Core Process', text:'The continuous freezer is the heart of ice cream production. Mix enters at 4°C and exits at −5°C in a matter of seconds, with air incorporated to achieve 80–120% overrun. The PID controller manages liquid refrigerant injection through an electronic expansion valve. This loop — visible in Module 1 — is currently showing a minor high-temperature deviation.', tags:['TIC-501','FEV-502','SPD-503','Overrun PID'], plcTags:['TIC-501 PV','FEV-502 Output','SPD-503 Dasher'], recSkills:['Refrigerant expansion valve PID','Overrun control strategy','Continuous freezer sequencing','Compressor interlock logic'], recScore:95 }
+  },
+  {
+    id:'filling', label:'Filling &\nPackaging', abbr:'FL',
+    x:20, y:145, w:200, h:80, color:'#2a1a0a', borderColor:'#ff8c00',
+    status:'running', icon:'📦',
+    kpi:{ status:'RUNNING', temp:'-5.0°C', flow:'3,200 u/h', pid:'AUTO', alarm:'CLEAR', batch:'FL-2024-041' },
+    dt:{ plc:'CPU 1512SP-1 PN', prog:'FB_FillingLine', cycle:'4ms', di:'24', do:'20', ai:'6', sensors:'FT ×2, PT ×1, Presence ×8, Speed encoder', interlocks:'Jam detect, Level Lo, Cap missing', maint:'Every 250h', fail:'Stop line, alarm', philosophy:'Servo-driven filling stations synchronized via SIMOTION. Net weight checked by inline checkweigher. Vision system detects cap presence and label position. All rejects automatically diverted.' },
+    narr:{ step:'STEP 6/9', title:'Filling & Packaging Line', text:'Product exits the freezer at −5°C and flows directly to servo-driven filling stations. Each portion is weight-checked inline and a vision system verifies lid placement and labeling accuracy. The conveyor speed and fill volumes are synchronized via SIMOTION motion controllers. Rejects are automatically diverted without manual intervention.', tags:['SIMOTION','Checkweigher','Vision-System','FT-601'], plcTags:['FT-601 Fill Rate','SPD-602 Conveyor','WT-603 Weight'], recSkills:['SIMOTION motion control','Vision system integration','Checkweigher communication','Reject handling logic'], recScore:85 }
+  },
+  {
+    id:'coldstorage', label:'Cold Storage\n& Dispatch', abbr:'CS',
+    x:240, y:145, w:160, h:80, color:'#001a3a', borderColor:'#00a8cc',
+    status:'running', icon:'🏭',
+    kpi:{ status:'RUNNING', temp:'-24.8°C', flow:'—', pid:'AUTO', alarm:'CLEAR', batch:'CS-2024-039' },
+    dt:{ plc:'CPU 1511-1 PN', prog:'FB_ColdStore', cycle:'5ms', di:'16', do:'12', ai:'8', sensors:'PT100 ×12, Door contacts ×6, LT ×4', interlocks:'Door open alarm, Temp Hi-Hi, Power loss UPS', maint:'Quarterly compressor service', fail:'Emergency alarm, backup cooling', philosophy:'Multi-zone cold storage maintained at −24°C to −20°C by dedicated screw compressors. WMS integration for pallet tracking. Temperature mapping per EN 60068 standard. Remote monitoring 24/7.' },
+    narr:{ step:'STEP 7/9', title:'Cold Storage & Dispatch', text:'Finished product is hardened and stored at −24°C in multi-zone cold storage. The facility integrates with a Warehouse Management System (WMS) for real-time pallet tracking. Temperature mapping per EN 60068 ensures uniform cooling. Remote monitoring alarms notify maintenance staff of any deviation within 60 seconds.', tags:['WMS Integration','EN 60068','Multi-zone control','Remote Monitoring'], plcTags:['TIC-701 Zone1','TIC-702 Zone2','AV-703 Door'], recSkills:['Multi-zone refrigeration control','WMS PLC integration','Temperature mapping standards','Alarm management systems'], recScore:78 }
+  },
+  {
+    id:'ctrlroom', label:'Electrical\nControl Room', abbr:'EC',
+    x:420, y:145, w:140, h:80, color:'#1a1a0a', borderColor:'#ffdd00',
+    status:'running', icon:'⚡',
+    kpi:{ status:'RUNNING', temp:'22.1°C', flow:'—', pid:'—', alarm:'CLEAR', batch:'SYS-CTRL' },
+    dt:{ plc:'CPU 1515F-2 PN', prog:'MainProgram OB1', cycle:'2.4ms', di:'48', do:'40', ai:'24', sensors:'Voltage ×6, Current ×6, Temp ×4, UPS status', interlocks:'Bus fault, UPS fail, Temp Hi', maint:'Annual PAT testing', fail:'UPS switchover <10ms, alarm all', philosophy:'Central MCC houses all SIMATIC S7-1500 PLCs, SINAMICS VFDs, and SITOP PSUs. PROFINET ring topology ensures redundancy. SCADA server and engineering workstation located in the control room.' },
+    narr:{ step:'STEP 8/9', title:'Electrical Control Room — MCC', text:'The Motor Control Centre houses the full automation architecture: SIMATIC S7-1500 PLCs, SINAMICS G120 VFDs, and SITOP power supplies in PROFINET ring topology. The engineering workstation runs STEP 7 TIA Portal V18. The SCADA server runs WinCC Runtime providing the overview screens shown in Module 3 of this platform.', tags:['TIA Portal V18','PROFINET Ring','WinCC Runtime','SITOP 24VDC'], plcTags:['MCC Bus Voltage','UPS Status','Ambient Temp'], recSkills:['TIA Portal programming','PROFINET network architecture','VFD parameter configuration','HMI/SCADA development'], recScore:90 }
+  },
+  {
+    id:'compressor', label:'Compressor\nRoom', abbr:'CR',
+    x:580, y:145, w:150, h:80, color:'#1a0a0a', borderColor:'#ff3355',
+    status:'running', icon:'⚙',
+    kpi:{ status:'RUNNING', temp:'42.0°C', flow:'—', pid:'AUTO', alarm:'CLEAR', batch:'CR-COMPRESSOR' },
+    dt:{ plc:'CPU 1511-1 PN', prog:'FB_CompressorCtrl', cycle:'3ms', di:'18', do:'16', ai:'12', sensors:'Pressure ×4, Temp ×6, Vibration ×2, Oil Level ×2', interlocks:'HP switch, LP switch, Oil pressure, Temp Hi', maint:'Every 1500h (oil change)', fail:'Stage shutdown, standby start', philosophy:'Twin-screw ammonia compressors with automated staging based on refrigeration demand. Capacity control 0–100% via slide valve. Suction pressure controls freezer temperature setpoint cascade.' },
+    narr:{ step:'STEP 9/9', title:'Compressor Room — Refrigeration Plant', text:'The refrigeration plant uses twin-screw ammonia compressors with automated staging. Capacity is modulated from 10% to 100% via slide valve control, managed by a dedicated PLC. Suction pressure setpoint is cascaded from the freezer temperature controller — the same loop demonstrated in Module 1 of this platform. Four-stage safety interlock protects against high pressure, low oil, and high discharge temperature.', tags:['Ammonia R717','Cascade PID','HP/LP Switches','Slide Valve'], plcTags:['PIC-901 Suction','TIC-902 Discharge','OPR-903 Oil Press'], recSkills:['Ammonia refrigeration systems','Cascade pressure/temperature PID','Compressor staging logic','Safety interlock programming'], recScore:93 }
+  }
+];
+
+// Plant state
+let vpState = {
+  zoom: 1, panX: 0, panY: 0,
+  dragging:false, dragStartX:0, dragStartY:0, dragPanX:0, dragPanY:0,
+  activeSection: null,
+  presenting: false, paused: false,
+  currentStep: -1,
+  presentInterval: null,
+  recruiterMode: false,
+  viewMode: 'normal',
+  animTick: 0,
+  flowOffset: 0
+};
+
+// Build step dots
+function buildStepDots() {
+  const wrap = document.getElementById('stepDots');
+  wrap.innerHTML = '';
+  plantSections.forEach((s, i) => {
+    const d = document.createElement('div');
+    d.className = 'step-dot';
+    d.title = s.label.replace('\n',' ');
+    d.onclick = () => vpGoToStep(i);
+    wrap.appendChild(d);
+  });
+}
+buildStepDots();
+
+// Canvas setup
+const vpCanvas = document.getElementById('plantCanvas');
+const vpCtx = vpCanvas.getContext('2d');
+
+function resizeVpCanvas() {
+  const wrap = vpCanvas.parentElement;
+  const w = wrap.offsetWidth || 860;
+  vpCanvas.width = w;
+  vpCanvas.height = Math.round(w * 0.58);
+  drawPlant();
+}
+
+function getSectionRect(s) {
+  const scaleX = vpCanvas.width / 760;
+  const scaleY = vpCanvas.height / 300;
+  return {
+    x: s.x * scaleX + vpState.panX,
+    y: s.y * scaleY + vpState.panY,
+    w: s.w * scaleX,
+    h: s.h * scaleY
+  };
+}
+
+function drawPlant() {
+  const c = vpCanvas, ctx = vpCtx;
+  const w = c.width, h = c.height;
+  ctx.clearRect(0,0,w,h);
+
+  // Background
+  ctx.fillStyle = vpState.viewMode === 'night' ? '#010509' : vpState.viewMode === 'maint' ? '#050e1a' : '#020b14';
+  ctx.fillRect(0,0,w,h);
+
+  // Grid
+  const gc = vpState.viewMode === 'night' ? 'rgba(0,100,180,0.05)' : 'rgba(0,180,255,0.06)';
+  ctx.strokeStyle = gc; ctx.lineWidth = 1;
+  const gStep = 40 * vpState.zoom;
+  const gOx = (vpState.panX % gStep + gStep) % gStep;
+  const gOy = (vpState.panY % gStep + gStep) % gStep;
+  for(let x=gOx;x<w;x+=gStep) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,h); ctx.stroke(); }
+  for(let y=gOy;y<h;y+=gStep) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(w,y); ctx.stroke(); }
+
+  ctx.save();
+  ctx.translate(w/2, h/2);
+  ctx.scale(vpState.zoom, vpState.zoom);
+  ctx.translate(-w/2, -h/2);
+
+  // Draw flow lines first (behind sections)
+  drawFlowLines(ctx, w, h);
+
+  // Draw sections
+  plantSections.forEach((s, idx) => {
+    const r = getSectionRect(s);
+    const isActive = vpState.activeSection === s.id;
+    const isPresStep = vpState.presenting && vpState.currentStep === idx;
+
+    // Glow for active
+    if(isActive || isPresStep) {
+      ctx.shadowBlur = 20;
+      ctx.shadowColor = s.borderColor;
+    }
+
+    // Background
+    const pulse = isPresStep ? 0.15 + 0.05*Math.sin(vpState.animTick*0.08) : 0;
+    ctx.fillStyle = s.color + (isActive ? 'ee' : isPresStep ? 'cc' : '99');
+    roundRect(ctx, r.x, r.y, r.w, r.h, 6);
+    ctx.fill();
+
+    // Border
+    ctx.strokeStyle = s.borderColor;
+    ctx.lineWidth = isActive || isPresStep ? 2.5 : 1.5;
+    ctx.setLineDash(isPresStep ? [6,3] : []);
+    roundRect(ctx, r.x, r.y, r.w, r.h, 6);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.shadowBlur = 0;
+
+    // Status LED dot
+    const ledColor = s.status === 'running' ? '#00ff88' : s.status === 'warning' ? '#ffdd00' : '#ff3355';
+    const ledPulse = 0.5 + 0.5*Math.sin(vpState.animTick*0.1 + idx*0.5);
+    ctx.beginPath();
+    ctx.arc(r.x + r.w - 10, r.y + 10, 5, 0, Math.PI*2);
+    ctx.fillStyle = ledColor;
+    ctx.shadowBlur = 8 * ledPulse;
+    ctx.shadowColor = ledColor;
+    ctx.fill();
+    ctx.shadowBlur = 0;
+
+    // Icon
+    ctx.font = `${Math.round(r.h * 0.22)}px Arial`;
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#fff';
+    ctx.fillText(s.icon, r.x + r.w/2, r.y + r.h * 0.38);
+
+    // Label
+    ctx.font = `bold ${Math.round(Math.min(r.w/10, 11))}px Rajdhani, sans-serif`;
+    ctx.fillStyle = isActive || isPresStep ? '#fff' : s.borderColor;
+    const lines = s.label.split('\n');
+    lines.forEach((ln, li) => {
+      ctx.fillText(ln, r.x + r.w/2, r.y + r.h * 0.6 + li * (r.h * 0.22));
+    });
+
+    // Section tag
+    ctx.font = `bold ${Math.round(Math.min(r.w/14, 9))}px Share Tech Mono, monospace`;
+    ctx.fillStyle = 'rgba(255,255,255,0.3)';
+    ctx.fillText(s.abbr, r.x + 8, r.y + 14);
+
+    // Maintenance mode: show internals overlay
+    if(vpState.viewMode === 'maint') {
+      ctx.fillStyle = 'rgba(255,221,0,0.06)';
+      roundRect(ctx, r.x, r.y, r.w, r.h, 6);
+      ctx.fill();
+      ctx.font = `8px Share Tech Mono`;
+      ctx.fillStyle = 'rgba(255,221,0,0.5)';
+      ctx.fillText('I/O: '+parseInt(s.dt.di+s.dt.do), r.x+4, r.y+r.h-6);
+    }
+  });
+
+  // Compass / plant label
+  ctx.fillStyle = 'rgba(0,180,255,0.12)';
+  ctx.font = 'bold 11px Share Tech Mono, monospace';
+  ctx.textAlign = 'left';
+  ctx.fillText('▸ PROCESS FLOW →', 10, h-10);
+  ctx.textAlign = 'center';
+  ctx.fillStyle = 'rgba(255,107,0,0.4)';
+  ctx.font = 'bold 12px Rajdhani, sans-serif';
+  ctx.fillText('SERBIA ICE CREAM MANUFACTURING — FLOOR PLAN L1', w/2, h-10);
+
+  ctx.restore();
+}
+
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x+r, y);
+  ctx.lineTo(x+w-r, y);
+  ctx.quadraticCurveTo(x+w, y, x+w, y+r);
+  ctx.lineTo(x+w, y+h-r);
+  ctx.quadraticCurveTo(x+w, y+h, x+w-r, y+h);
+  ctx.lineTo(x+r, y+h);
+  ctx.quadraticCurveTo(x, y+h, x, y+h-r);
+  ctx.lineTo(x, y+r);
+  ctx.quadraticCurveTo(x, y, x+r, y);
+  ctx.closePath();
+}
+
+// Animated flow lines between sections
+function drawFlowLines(ctx, cw, ch) {
+  const flows = [
+    { from:'rawmat', to:'mixing', color:'rgba(0,204,102,0.5)', label:'Dairy Feed' },
+    { from:'mixing', to:'pasteur', color:'rgba(0,168,204,0.6)', label:'Mix Feed' },
+    { from:'pasteur', to:'aging', color:'rgba(255,107,0,0.5)', label:'Hot Mix' },
+    { from:'aging', to:'freezer', color:'rgba(136,68,255,0.5)', label:'Aged Mix' },
+    { from:'freezer', to:'filling', color:'rgba(0,212,255,0.6)', label:'Frozen Mix' },
+    { from:'filling', to:'coldstorage', color:'rgba(255,140,0,0.5)', label:'Packed' },
+    { from:'ctrlroom', to:'freezer', color:'rgba(255,221,0,0.3)', label:'Control' },
+    { from:'compressor', to:'freezer', color:'rgba(255,51,85,0.4)', label:'Refrigerant' },
+  ];
+
+  flows.forEach(fl => {
+    const fromS = plantSections.find(s=>s.id===fl.from);
+    const toS = plantSections.find(s=>s.id===fl.to);
+    if(!fromS||!toS) return;
+    const fr = getSectionRect(fromS);
+    const tr = getSectionRect(toS);
+    const x1 = fr.x + fr.w/2, y1 = fr.y + fr.h/2;
+    const x2 = tr.x + tr.w/2, y2 = tr.y + tr.h/2;
+
+    // Animated dashed line
+    ctx.beginPath();
+    ctx.strokeStyle = fl.color;
+    ctx.lineWidth = 2;
+    const dashLen = 12, gapLen = 8;
+    const total = dashLen + gapLen;
+    ctx.setLineDash([dashLen, gapLen]);
+    ctx.lineDashOffset = -(vpState.flowOffset % total);
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Arrow head at destination edge
+    const angle = Math.atan2(y2-y1, x2-x1);
+    const edgeX = x2 - Math.cos(angle)*(tr.w/2+2);
+    const edgeY = y2 - Math.sin(angle)*(tr.h/2+2);
+    ctx.beginPath();
+    ctx.fillStyle = fl.color;
+    ctx.moveTo(edgeX, edgeY);
+    ctx.lineTo(edgeX - 10*Math.cos(angle-0.4), edgeY - 10*Math.sin(angle-0.4));
+    ctx.lineTo(edgeX - 10*Math.cos(angle+0.4), edgeY - 10*Math.sin(angle+0.4));
+    ctx.closePath(); ctx.fill();
+  });
+}
+
+// Plant animation loop
+let vpAnimRunning = false;
+function startVpAnim() {
+  if(vpAnimRunning) return;
+  vpAnimRunning = true;
+  function loop() {
+    if(!vpAnimRunning) return;
+    vpState.animTick++;
+    vpState.flowOffset += 1.2;
+    drawPlant();
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+}
+
+// Resize handler for plant canvas - handled in showModule and on global resize above
+
+// Mouse interactions
+vpCanvas.addEventListener('mousemove', e => {
+  if(vpState.dragging) {
+    vpState.panX = vpState.dragPanX + (e.clientX - vpState.dragStartX);
+    vpState.panY = vpState.dragPanY + (e.clientY - vpState.dragStartY);
+    return;
+  }
+  // Hover detection
+  const rect = vpCanvas.getBoundingClientRect();
+  const mx = e.clientX - rect.left, my = e.clientY - rect.top;
+  const cw = vpCanvas.width, ch = vpCanvas.height;
+  // Transform mouse to canvas coords
+  const lx = (mx - cw/2) / vpState.zoom + cw/2;
+  const ly = (my - ch/2) / vpState.zoom + ch/2;
+
+  let found = null;
+  plantSections.forEach(s => {
+    const r = getSectionRect(s);
+    if(lx>=r.x && lx<=r.x+r.w && ly>=r.y && ly<=r.y+r.h) found = s;
+  });
+
+  const tip = document.getElementById('areaTooltip');
+  if(found) {
+    vpCanvas.style.cursor = 'pointer';
+    const statusColor = found.status === 'running' ? '#00ff88' : found.status === 'warning' ? '#ffdd00' : '#ff3355';
+    tip.innerHTML = `<span style="color:${statusColor}">● ${found.status.toUpperCase()}</span><br><strong style="color:#fff;font-size:12px;">${found.label.replace('\n',' ')}</strong><br><span style="color:rgba(122,154,181,0.8);">Click to inspect section</span>`;
+    tip.style.display = 'block';
+    tip.style.left = (e.clientX + 14) + 'px';
+    tip.style.top = (e.clientY - 10) + 'px';
+  } else {
+    vpCanvas.style.cursor = 'crosshair';
+    tip.style.display = 'none';
+  }
+});
+
+vpCanvas.addEventListener('mouseleave', () => {
+  document.getElementById('areaTooltip').style.display = 'none';
+  if(vpState.dragging) { vpState.dragging = false; }
+});
+
+vpCanvas.addEventListener('mousedown', e => {
+  vpState.dragging = true;
+  vpState.dragStartX = e.clientX;
+  vpState.dragStartY = e.clientY;
+  vpState.dragPanX = vpState.panX;
+  vpState.dragPanY = vpState.panY;
+});
+
+vpCanvas.addEventListener('mouseup', e => {
+  const moved = Math.abs(e.clientX - vpState.dragStartX) + Math.abs(e.clientY - vpState.dragStartY);
+  vpState.dragging = false;
+  if(moved < 5) {
+    // Click
+    const rect = vpCanvas.getBoundingClientRect();
+    const mx = e.clientX - rect.left, my = e.clientY - rect.top;
+    const cw = vpCanvas.width, ch = vpCanvas.height;
+    const lx = (mx - cw/2) / vpState.zoom + cw/2;
+    const ly = (my - ch/2) / vpState.zoom + ch/2;
+    plantSections.forEach((s,i) => {
+      const r = getSectionRect(s);
+      if(lx>=r.x && lx<=r.x+r.w && ly>=r.y && ly<=r.y+r.h) vpSelectSection(i);
+    });
+  }
+});
+
+vpCanvas.addEventListener('wheel', e => {
+  e.preventDefault();
+  const delta = e.deltaY > 0 ? 0.9 : 1.1;
+  vpState.zoom = Math.max(0.5, Math.min(3, vpState.zoom * delta));
+}, {passive:false});
+
+function vpSelectSection(idx) {
+  const s = plantSections[idx];
+  vpState.activeSection = s.id;
+  vpState.currentStep = idx;
+  updateNarration(s);
+  updateKPI(s);
+  updateDTInfo(s);
+  updateStepDots(idx);
+  document.getElementById('vpFlowProgress').style.width = ((idx+1)/plantSections.length*100)+'%';
+}
+
+function updateNarration(s) {
+  document.getElementById('vpNarStep').textContent = s.narr.step;
+  document.getElementById('vpNarTitle').textContent = s.narr.title;
+  document.getElementById('vpNarText').textContent = s.narr.text;
+  const tagsEl = document.getElementById('vpNarTags');
+  tagsEl.innerHTML = '';
+  s.narr.tags.forEach((t,i) => {
+    const span = document.createElement('span');
+    const cls = i%3===0?'ntag-plc':i%3===1?'ntag-io':'ntag-kpi';
+    span.className = 'narration-tag '+cls;
+    span.textContent = t;
+    tagsEl.appendChild(span);
+  });
+  document.getElementById('vpActiveSectionName').textContent = s.label.replace('\n',' ');
+
+  // Recruiter skills
+  if(vpState.recruiterMode) {
+    updateRecruiterPanel(s);
+  }
+}
+
+function updateKPI(s) {
+  const k = s.kpi;
+  const statusEl = document.getElementById('kpi-status');
+  statusEl.textContent = k.status;
+  statusEl.style.color = k.status==='RUNNING'?'var(--green)':k.status==='WARNING'?'var(--yellow)':'var(--red)';
+  document.getElementById('kpi-temp').textContent = k.temp;
+  document.getElementById('kpi-flow').textContent = k.flow;
+  document.getElementById('kpi-pid').textContent = k.pid;
+  const alarmEl = document.getElementById('kpi-alarm');
+  alarmEl.textContent = k.alarm;
+  alarmEl.style.color = k.alarm==='CLEAR'?'var(--green)':'var(--red)';
+  document.getElementById('kpi-batch').textContent = k.batch;
+}
+
+function updateDTInfo(s) {
+  const d = s.dt;
+  document.getElementById('dt-plc').textContent = d.plc;
+  document.getElementById('dt-prog').textContent = d.prog;
+  document.getElementById('dt-cycle').textContent = d.cycle;
+  document.getElementById('dt-di').textContent = d.di;
+  document.getElementById('dt-do').textContent = d.do;
+  document.getElementById('dt-ai').textContent = d.ai;
+  document.getElementById('dt-sensors').textContent = d.sensors;
+  document.getElementById('dt-interlocks').textContent = d.interlocks;
+  document.getElementById('dt-maint').textContent = d.maint;
+  document.getElementById('dt-fail').textContent = d.fail;
+  document.getElementById('dt-philosophy').textContent = d.philosophy;
+}
+
+function updateStepDots(activeIdx) {
+  document.querySelectorAll('.step-dot').forEach((d,i) => {
+    d.classList.remove('active','done');
+    if(i < activeIdx) d.classList.add('done');
+    else if(i === activeIdx) d.classList.add('active');
+  });
+}
+
+function updateRecruiterPanel(s) {
+  const skillsEl = document.getElementById('recruiterSkills');
+  skillsEl.innerHTML = '';
+  s.narr.recSkills.forEach(sk => {
+    const div = document.createElement('div');
+    div.className = 'rec-skill';
+    div.innerHTML = `<div class="rec-skill-dot"></div><span style="font-family:'Exo 2',sans-serif;font-size:11px;color:var(--text);">${sk}</span>`;
+    skillsEl.appendChild(div);
+  });
+  document.getElementById('recSkillBar').style.width = s.narr.recScore + '%';
+}
+
+function vpGoToStep(idx) {
+  vpSelectSection(idx);
+  if(vpState.presenting && !vpState.paused) {
+    clearInterval(vpState.presentInterval);
+    startPresentInterval();
+  }
+}
+
+// Presentation controls
+function vpStartPresentation() {
+  vpState.presenting = true;
+  vpState.paused = false;
+  if(vpState.currentStep < 0) vpState.currentStep = 0;
+  vpSelectSection(vpState.currentStep);
+  startPresentInterval();
+  document.getElementById('vpPlayBtn').style.opacity = '0.5';
+}
+
+function startPresentInterval() {
+  clearInterval(vpState.presentInterval);
+  vpState.presentInterval = setInterval(() => {
+    if(!vpState.paused) vpNextSection();
+  }, 6000);
+}
+
+function vpPausePresentation() {
+  vpState.paused = !vpState.paused;
+  const btn = document.getElementById('vpPauseBtn');
+  btn.textContent = vpState.paused ? '▶ RESUME' : '⏸ PAUSE';
+}
+
+function vpNextSection() {
+  const next = (vpState.currentStep + 1) % plantSections.length;
+  vpSelectSection(next);
+}
+
+function vpPrevSection() {
+  const prev = (vpState.currentStep - 1 + plantSections.length) % plantSections.length;
+  vpSelectSection(prev);
+}
+
+function vpStopPresentation() {
+  vpState.presenting = false;
+  vpState.paused = false;
+  clearInterval(vpState.presentInterval);
+  vpState.activeSection = null;
+  document.getElementById('vpPlayBtn').style.opacity = '1';
+  document.getElementById('vpPauseBtn').textContent = '⏸ PAUSE';
+  document.getElementById('vpActiveSectionName').textContent = '—';
+}
+
+function vpZoom(factor) {
+  vpState.zoom = Math.max(0.5, Math.min(3, vpState.zoom * factor));
+}
+
+function vpResetView() {
+  vpState.zoom = 1;
+  vpState.panX = 0;
+  vpState.panY = 0;
+}
+
+function setView(mode) {
+  vpState.viewMode = mode;
+  document.querySelectorAll('.vctrl-btn').forEach(b => b.classList.remove('active-view'));
+  document.getElementById('vctrl-'+mode).classList.add('active-view');
+}
+
+function toggleRecruiterMode() {
+  vpState.recruiterMode = document.getElementById('recruiterModeToggle').checked;
+  const overlay = document.getElementById('recruiterOverlay');
+  overlay.classList.toggle('visible', vpState.recruiterMode);
+  if(vpState.recruiterMode && vpState.activeSection) {
+    const s = plantSections.find(p=>p.id===vpState.activeSection);
+    if(s) updateRecruiterPanel(s);
+  }
+}
+
+function exportPlantSummary() {
+  const lines = [
+    'INDUSTRIAL AUTOMATION DEPLOYMENT PLATFORM — PLANT SUMMARY',
+    '==========================================================',
+    `Date: ${new Date().toLocaleDateString('en-GB')}`,
+    `Facility: Serbia Ice Cream Manufacturing — Line 1 & 2`,
+    `System: SIMATIC S7-1500 / PROFINET / WinCC SCADA`,
+    '',
+    'PLANT SECTIONS:',
+    '---------------'
+  ];
+  plantSections.forEach((s,i) => {
+    lines.push(`${i+1}. ${s.label.replace('\n',' ')} [${s.status.toUpperCase()}]`);
+    lines.push(`   PLC: ${s.dt.plc} | Program: ${s.dt.prog}`);
+    lines.push(`   I/O: DI=${s.dt.di} DO=${s.dt.do} AI=${s.dt.ai}`);
+    lines.push(`   Sensors: ${s.dt.sensors}`);
+    lines.push(`   Safety Interlocks: ${s.dt.interlocks}`);
+    lines.push('');
+  });
+  lines.push('CURRENT KPIs:');
+  lines.push('  Freezer Temp: ' + document.getElementById('sidebarFreeze').textContent);
+  lines.push('  Production: ' + document.getElementById('sidebarProd').textContent);
+  lines.push('  OEE: ' + document.getElementById('sidebarOEE').textContent);
+  lines.push('');
+  lines.push('Candidate Eval: ' + (document.getElementById('candName').value || 'N/A'));
+  lines.push('Eval ID: ' + document.getElementById('evalID').textContent);
+  lines.push('');
+  lines.push('Generated by IADP Advanced Edition v3.7.2');
+
+  const blob = new Blob([lines.join('\n')], {type:'text/plain'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'Plant_Summary_' + new Date().toISOString().slice(0,10) + '.txt';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// Init - only draw if plant module visible, otherwise draw on first activation
+setTimeout(function(){
+  var pc = document.getElementById('plantCanvas');
+  if(pc) {
+    var w = pc.parentElement ? pc.parentElement.offsetWidth : 0;
+    if(w > 0) resizeVpCanvas();
+  }
+}, 300);
+
+</script>
+</body>
+</html>
